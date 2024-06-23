@@ -4,70 +4,71 @@
 // ############################# PENGATURAN TAMPILAN SETIAP HALAMAN ######################################################
 // ############################# ATUR TAMPILAN BASEMAP UTAMA ############################################################
 
-ui.root.clear(0, Map);
-var uiMap = ui.Map();
-ui.root.widgets().add(uiMap);
-function mapSetUp() {
-  uiMap.setOptions("HYBRID");
-  uiMap.setCenter(120.20537067522494, -2.268410004950352, 4);
-  uiMap.style().set("cursor", "crosshair");
-  uiMap.drawingTools().set("shown", false);
-}
-mapSetUp();
+  ui.root.clear(0, Map);
+  var uiMap = ui.Map();
+  ui.root.widgets().add(uiMap);
+  function mapSetUp() {
+    uiMap.setOptions("HYBRID");
+    uiMap.setCenter(120.20537067522494, -2.268410004950352, 4);
+    uiMap.style().set("cursor", "crosshair");
+    uiMap.drawingTools().set("shown", false);
+  }
+  mapSetUp();
+  
 
 // ############################# PEMBUATAN PANEL - PANEL YANG DIGUNAKAN ###################################################################
 
 // Membuat Grafik Statistik Panel
-var grafikPanel = ui.Panel({
-  style: {
-    width: "23rem",
-    position: "top-center",
-  },
-});
+  var grafikPanel = ui.Panel({
+    style: {
+      width: "23rem",
+      position: "top-center",
+    },
+  });
 
 // Membuat URL Unduh Panel
-var urlPanel = ui.Panel({
-  style: {
-    position: "bottom-left",
-    padding: "8px 5px",
-    width: "350px",
-    height: "180px",
-  },
-});
+  var urlPanel = ui.Panel({
+    style: {
+      position: "bottom-left",
+      padding: "8px 5px",
+      width: "350px",
+      height: "180px",
+    },
+  });
 
 // Membuat Thumbnail Time-Seris Panel
-var thumbnailPanel = ui.Panel({
-  style: {
-    position: "bottom-right",
-  },
-});
+  var thumbnailPanel = ui.Panel({
+    style: {
+      position: "bottom-right",
+    },
+  });
 
-var infoVisualisasiThumbnailLabel = ui.Label("Visualisasi Time-Series", {
-  fontWeight: "bold",
-  fontSize: "14px",
-});
+  var infoVisualisasiThumbnailLabel = ui.Label("Visualisasi Time-Series", {
+    fontWeight: "bold",
+    fontSize: "14px",
+  });
 
 // ############################# PEMBUATAN VARIABEL KOLEKSI CITRA SENTINEL 5P-TROPOMI ##############################
 
-function collection1() {
-  var sentinelCO = ee.ImageCollection("COPERNICUS/S5P/OFFL/L3_CO");
-  return sentinelCO;
-}
-
-function collection2() {
-  var sentinelNO2 = ee.ImageCollection("COPERNICUS/S5P/OFFL/L3_NO2");
-  return sentinelNO2;
-}
-
-function collection3() {
-  var sentinelSO2 = ee.ImageCollection("COPERNICUS/S5P/OFFL/L3_SO2");
-  return sentinelSO2;
-}
-
-function collection4() {
-  var sentinelOzon = ee.ImageCollection("COPERNICUS/S5P/OFFL/L3_O3");
-  return sentinelOzon;
-}
+  function collection1() {
+    var sentinelCO = ee.ImageCollection("COPERNICUS/S5P/OFFL/L3_CO");
+    return sentinelCO;
+  }
+  
+  function collection2() {
+    var sentinelNO2 = ee.ImageCollection("COPERNICUS/S5P/OFFL/L3_NO2");
+    return sentinelNO2;
+  }
+  
+  function collection3() {
+    var sentinelSO2 = ee.ImageCollection("COPERNICUS/S5P/OFFL/L3_SO2");
+    return sentinelSO2;
+  }
+  
+  function collection4() {
+    var sentinelOzon = ee.ImageCollection("COPERNICUS/S5P/OFFL/L3_O3");
+    return sentinelOzon;
+  }
 
 // ############################# PENGATURAN PEMILIHAN CITRA ################################################
 
@@ -113,7 +114,7 @@ var handleCitra = function (formatAwalTanggal, formatAkhirTanggal) {
       );
     });
   }
-
+  
   // Melakukan Return Citra Col untuk Citra Asli dan Citra PolutanMean untuk Citra hasil Konversi
   return { col: col, polutanMean: polutanMean };
 };
@@ -132,13 +133,15 @@ var startYear = ee.Date("2019-01-01");
 var endYear = ee.Date("2024-03-31");
 
 // Membuat Palet Warna untuk Visualisasi
-var paletWarna = ["black", "blue", "purple", "cyan", "green", "yellow", "red"];
+var paletWarna = [
+  "black", "blue", "purple", "cyan", "green", "yellow", "red",
+];
 
 function makeColorBarParams(palette) {
   return {
     bbox: [0, 0, 1, 0.1],
-    dimensions: "100x10",
-    format: "png",
+    dimensions: '100x10',
+    format: 'png',
     min: 0,
     max: 1,
     palette: paletWarna,
@@ -150,7 +153,7 @@ function legendaPolutan() {
   setParamsROI();
   setParamsAset();
   setParamsAdmin();
-
+  
   // Membuat Panel Legenda
   var legendaPolutanPanel = ui.Panel({
     style: {
@@ -158,7 +161,7 @@ function legendaPolutan() {
       padding: "8px 10px",
     },
   });
-
+  
   // Melakukan Set Nilai Minimum dan Maksimum Citra
   var nilaiMin, nilaiMaks, jenisPolutan;
   switch (polutanTerpilihAdmin || polutanTerpilihROI || polutanTerpilihAset) {
@@ -186,7 +189,7 @@ function legendaPolutan() {
 
   // Menambahkan Judul Legenda
   var judulLegendaPolutan = ui.Label({
-    value: "Konsentrasi Gas " + jenisPolutan + " (mol/m²)",
+    value: "Konsentrasi Gas "+ jenisPolutan +" (mol/m²)",
     style: {
       fontWeight: "bold",
       fontSize: "14px",
@@ -209,27 +212,25 @@ function legendaPolutan() {
     .multiply((warnaLegenda.max - warnaLegenda.min) / 100.0)
     .add(warnaLegenda.min);
   var gambarLegenda = gradasi.visualize(warnaLegenda);
-
+  
   // Membuat bar warna pada legenda
   var legendaThumbnail = ui.Thumbnail({
     image: ee.Image.pixelLonLat().select(0),
     params: makeColorBarParams(paletWarna),
-    style: { stretch: "horizontal", margin: "0px 8px", maxHeight: "24px" },
+    style: {stretch: 'horizontal', margin: '0px 8px', maxHeight: '24px'},
   });
   legendaPolutanPanel.add(legendaThumbnail);
-
+  
   // membuat tulisan pada legenda dengan tiga angka
   var legendaLabels = ui.Panel({
     widgets: [
-      ui.Label(warnaLegenda["min"], { margin: "4px 8px" }),
-      ui.Label(warnaLegenda["max"] / 2, {
-        margin: "4px 8px",
-        textAlign: "center",
-        stretch: "horizontal",
-      }),
-      ui.Label(warnaLegenda["max"], { margin: "4px 8px" }),
+      ui.Label(warnaLegenda['min'], {margin: '4px 8px'}),
+      ui.Label(
+          (warnaLegenda['max'] / 2),
+          {margin: '4px 8px', textAlign: 'center', stretch: 'horizontal'}),
+      ui.Label(warnaLegenda['max'], {margin: '4px 8px'})
     ],
-    layout: ui.Panel.Layout.flow("horizontal"),
+    layout: ui.Panel.Layout.flow('horizontal')
   });
   legendaPolutanPanel.add(legendaLabels);
 
@@ -285,7 +286,7 @@ function legendaKualitasUdara() {
       layout: ui.Panel.Layout.Flow("horizontal"),
     });
   };
-
+  
   // Menentukan Warna Legenda Kualitas Udara
   var legendaWarnaKualitasUdara = [
     "006400",
@@ -294,7 +295,7 @@ function legendaKualitasUdara() {
     "FF0000",
     "000000",
   ];
-
+  
   // Menentukan Label Legenda Kualitas Udara dan Penambahan Legenda ke dalam Peta
   var infoLegendaKualitasUdara = [
     "Sangat Baik",
@@ -331,7 +332,39 @@ var infoROILabel = ui.Label(
   }
 );
 
-var garisROISeparator = ui.Label(
+var garisROISeparator1 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisROISeparator2 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisROISeparator3 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisROISeparator4 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisROISeparator5 = ui.Label(
   "_______________________________________________",
   {
     fontWeight: "bold",
@@ -409,9 +442,32 @@ var peringatanROILabel = ui.Label(
   }
 );
 
-var infoTanggalROILabel = ui.Label("Pilih Rentang Waktu Perekaman", {
-  fontWeight: "bold",
-  fontSize: "1.2rem",
+var infoParameterROILabel = ui.Label(
+  "PARAMETER PEMANTAUAN KUALITAS UDARA",
+  {
+    fontWeight: "bold",
+    fontSize: "1.2rem",
+    textAlign: "center",
+  }
+);
+
+var waktuROIButton = ui.Button({
+  label: "RENTANG WAKTU PEREKAMAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var waktuROIPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+waktuROIButton.onClick(function () {
+  if (waktuROIPanel.style().get("shown")) {
+    waktuROIButton.setLabel("RENTANG WAKTU PEREKAMAN");
+    waktuROIPanel.style().set("shown", false);
+  } else {
+    waktuROIButton.setLabel("PILIH RENTANG WAKTU PEREKAMAN");
+    waktuROIPanel.style().set("shown", true);
+  }
 });
 
 var infoPemilihanTanggalROILabel = ui.Label(
@@ -448,9 +504,34 @@ var akhirTanggalROISlider = ui.DateSlider({
   style: { width: "300px" },
 });
 
-var infoJenisROILabel = ui.Label("Pilih Jenis Gas Polutan", {
+waktuROIPanel.add(infoPemilihanTanggalROILabel);
+waktuROIPanel.add(infoTanggalAwalROILabel);
+waktuROIPanel.add(awalTanggalROISlider);
+waktuROIPanel.add(infoTanggalAkhirROILabel);
+waktuROIPanel.add(akhirTanggalROISlider);
+
+var jenisROIButton = ui.Button({
+  label: "JENIS GAS POLUTAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var jenisROIPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+jenisROIButton.onClick(function () {
+  if (jenisROIPanel.style().get("shown")) {
+    jenisROIButton.setLabel("JENIS GAS POLUTAN");
+    jenisROIPanel.style().set("shown", false);
+  } else {
+    jenisROIButton.setLabel("PILIH JENIS GAS POLUTAN");
+    jenisROIPanel.style().set("shown", true);
+  }
+});
+
+var infoJenisROILabel = ui.Label("Gas Polutan CO, NO₂, SO₂ dan O₃", {
+  fontSize: "15px",
   fontWeight: "bold",
-  fontSize: "1.2rem",
 });
 
 var parameterROIDropDown = ui.Select({
@@ -462,9 +543,26 @@ var parameterROIDropDown = ui.Select({
   style: { stretch: "horizontal" },
 });
 
-var infoWilayahROILabel = ui.Label("Kelola Area Wilayah Kajian", {
-  fontWeight: "bold",
-  fontSize: "1.2rem",
+jenisROIPanel.add(infoJenisROILabel);
+jenisROIPanel.add(parameterROIDropDown);
+
+var areaROIButton = ui.Button({
+  label: "AREA WILAYAH KAJIAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var areaROIPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+areaROIButton.onClick(function () {
+  if (areaROIPanel.style().get("shown")) {
+    areaROIButton.setLabel("AREA WILAYAH KAJIAN");
+    areaROIPanel.style().set("shown", false);
+  } else {
+    areaROIButton.setLabel("KELOLA AREA WILAYAH KAJIAN");
+    areaROIPanel.style().set("shown", true);
+  }
 });
 
 var infoPemilihanWilayahROILabel = ui.Label(
@@ -494,13 +592,9 @@ var hapusGeometriROIButton = ui.Button({
   style: { stretch: "horizontal" },
 });
 
-var infoSubmitROILabel = ui.Label(
-  "Analisis dan Visualisasi Spasial Konsentrasi Gas Polutan",
-  {
-    fontWeight: "bold",
-    fontSize: "1.2rem",
-  }
-);
+areaROIPanel.add(infoPemilihanWilayahROILabel);
+areaROIPanel.add(buatGeometriROIButton);
+areaROIPanel.add(hapusGeometriROIButton);
 
 var judulkoordinatROILabel = ui.Label(
   "Kelola Koordinat untuk Analisis Dinamika Konsentrasi Polutan",
@@ -546,44 +640,86 @@ var koordinatROIButton = ui.Button({
   style: { stretch: "horizontal" },
 });
 
+var komputasiROIButton = ui.Button({
+  label: "KOMPUTASI DAN ANALISIS",
+  style: { stretch: "horizontal", color: "black" },
+});
+var komputasiROIPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+komputasiROIButton.onClick(function () {
+  if (komputasiROIPanel.style().get("shown")) {
+    komputasiROIButton.setLabel("KOMPUTASI DAN ANALISIS");
+    komputasiROIPanel.style().set("shown", false);
+  } else {
+    komputasiROIButton.setLabel("PILIH JENIS KOMPUTASI DAN ANALISIS");
+    komputasiROIPanel.style().set("shown", true);
+  }
+});
+
+var infoSubmitROILabel = ui.Label(
+  "Komputasi dan Visualisasi Spasial",
+  {
+    fontWeight: "bold",
+    fontSize: "1.2rem",
+  }
+);
+
+var infoKlasifikasiROILabel = ui.Label(
+  "[Klik Disini] Informasi Klasifikasi Kualitas Udara",
+  {
+    fontSize: "12px",
+    margin: "2px 15px 2px 15px",
+    textAlign: "justify",
+  },
+  "https://drive.google.com/file/d/1aC6rH7uoVfM9oJCcroJ3zm24942G83fY/view?usp=sharing"
+);
+
+var komputasiROIDropDown = ui.Select({
+  items: ["Konsentrasi Polutan", "Kualitas Udara"],
+  placeholder: "Pilih Jenis Komputasi",
+  onChange: function (selected) {},
+  style: { stretch: "horizontal" },
+});
+
 var submitROIButton = ui.Button({
-  label: "Submit dan Analisis Konsentrasi Polutan",
+  label: "Submit dan Analisis",
   onClick: function () {
-    // Memotong Citra Menggunakan Geometri yang telah dibuat
-    var geom = drawingTools.layers().get(0).toGeometry();
-    if (geom) {
-      geometri = geom;
-      clipCitraROI();
-    }
-    uiMap.clear();
-    uiMap.drawingTools().set("shown", true);
-    grafikPanel.clear();
-    ui.root.remove(grafikPanel);
+    setParamsROI();
+    if (komputasiTerpilihROI === "Konsentrasi Polutan") {
+        // Memotong Citra Menggunakan Geometri yang telah dibuat
+      var geom = drawingTools.layers().get(0).toGeometry();
+      if (geom) {
+        geometri = geom;
+        clipCitraROI();
+      }
+      uiMap.clear();
+      uiMap.drawingTools().set("shown", true);
+      grafikPanel.clear();
+      ui.root.remove(grafikPanel);
 
-    // Menampilkan Grafik Konsentrasi dan beberapa Widgets lainnya pada Grafik Panel
-    var grafikKonsentrasiCitraROI = visualisasiGrafikCitraROI();
-    var grafikKonsentrasiCitraKonversiROI = visualisasiGrafikCitraKonversiROI();
-    grafikPanel.add(grafikKonsentrasiCitraROI);
-    grafikPanel.add(grafikKonsentrasiCitraKonversiROI);
-    grafikPanel.add(judulkoordinatROILabel);
-    grafikPanel.add(infoKoordinatROILabel);
-    grafikPanel.add(infoLongitudeROILabel);
-    grafikPanel.add(lonROITextBox);
-    grafikPanel.add(infoLatitudeROILabel);
-    grafikPanel.add(latROITextBox);
-    grafikPanel.add(koordinatROIButton);
+      // Menampilkan Grafik Konsentrasi dan beberapa Widgets lainnya pada Grafik Panel
+      var grafikKonsentrasiCitraROI = visualisasiGrafikCitraROI();
+      var grafikKonsentrasiCitraKonversiROI = visualisasiGrafikCitraKonversiROI();
+      grafikPanel.add(grafikKonsentrasiCitraROI);
+      grafikPanel.add(grafikKonsentrasiCitraKonversiROI);
+      grafikPanel.add(judulkoordinatROILabel);
+      grafikPanel.add(infoKoordinatROILabel);
+      grafikPanel.add(infoLongitudeROILabel);
+      grafikPanel.add(lonROITextBox);
+      grafikPanel.add(infoLatitudeROILabel);
+      grafikPanel.add(latROITextBox);
+      grafikPanel.add(koordinatROIButton);
 
-    // Callback Onclick pada Peta untuk mengambil Koordinat dan Ekstraksi Kalkukasi Dinamika Konsentrasi
-    uiMap.onClick(function (coords) {
+      // Callback Onclick pada Peta untuk mengambil Koordinat dan Ekstraksi Kalkukasi Dinamika Konsentrasi
+      uiMap.onClick(function (coords) {
       // Mengambil Nilai Koordinat ke dalam TextBox
       lonROITextBox.setValue(coords.lon.toFixed(5));
       latROITextBox.setValue(coords.lat.toFixed(5));
       var poinKlikROI = ee.Geometry.Point(coords.lon, coords.lat);
-      var titik = ui.Map.Layer(
-        poinKlikROI,
-        { color: "000000" },
-        "Titik Lokasi/Koordinat"
-      );
+      var titik = ui.Map.Layer(poinKlikROI, {color: '000000'}, 'Titik Lokasi/Koordinat');
       uiMap.layers().set(1, titik);
 
       // Memanggil Fungsi set Parameter
@@ -610,17 +746,14 @@ var submitROIButton = ui.Button({
       } else {
         namaLayer = "Pilih Parameter Jenis Polutan";
       }
-
+          
       var namaLayerKonversi;
       if (polutanTerpilihROI === "Karbon Monoksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
+        namaLayerKonversi = "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
       } else if (polutanTerpilihROI === "Nitrogen Dioksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Nitrogen Dioksida Terkonversi (µg/m³)";
+        namaLayerKonversi = "Konsentrasi Gas Nitrogen Dioksida Terkonversi (µg/m³)";
       } else if (polutanTerpilihROI === "Sulfur Dioksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Sulfur Dioksida Terkonversi (µg/m³)";
+        namaLayerKonversi = "Konsentrasi Gas Sulfur Dioksida Terkonversi (µg/m³)";
       } else if (polutanTerpilihROI === "Ozon") {
         namaLayerKonversi = "Konsentrasi Gas Ozon Terkonversi (µg/m³)";
       } else {
@@ -675,64 +808,54 @@ var submitROIButton = ui.Button({
           pointSize: 3,
         });
 
-      grafikPanel.widgets().set(0, grafikCitraAsliROI);
-      grafikPanel.widgets().set(1, grafikCitraKonversiROI);
-    });
-    uiMap.setOptions("HYBRID");
-    ui.root.remove(urlPanel);
-    ui.root.insert(0, grafikPanel);
+        grafikPanel.widgets().set(0, grafikCitraAsliROI);
+        grafikPanel.widgets().set(1, grafikCitraKonversiROI);
+      });
+      uiMap.setOptions("HYBRID");
+      ui.root.remove(urlPanel);
+      ui.root.insert(0, grafikPanel);
+      } else if (komputasiTerpilihROI === "Kualitas Udara") {
+        uiMap.clear();
+        uiMap.setOptions("HYBRID");
+        uiMap.drawingTools().set("shown", true);
+        ui.root.remove(grafikPanel);
+        ui.root.remove(urlPanel);
+        prosesAnalisisKualitasUdaraROI();
+      } else {
+        uiMap.clear();
+        uiMap.setOptions("HYBRID");
+        uiMap.drawingTools().set("shown", true);
+        ui.root.remove(grafikPanel);
+        ui.root.remove(urlPanel);
+        prosesAnalisisKualitasUdaraROI();
+      }
   },
   style: { stretch: "horizontal" },
 });
 
 var unduhCitraROIButton = ui.Button({
-  label: "Unduh Data Spasial Konsentrasi Polutan",
+  label: "Unduh Data Spasial",
   onClick: function () {
-    unduhCitraROI();
-    ui.root.remove(grafikPanel);
+    setParamsROI();
+    if (komputasiTerpilihROI === "Konsentrasi Polutan") {
+        unduhCitraROI();
+        ui.root.remove(grafikPanel);
+      } else if (komputasiTerpilihROI === "Kualitas Udara") {
+        unduhCitraKualitasUdaraROI();
+        ui.root.remove(grafikPanel);
+      } else {
+        unduhCitraKualitasUdaraROI();
+        ui.root.remove(grafikPanel);
+      }
   },
   style: { stretch: "horizontal" },
 });
 
-var infoAnalisisROILabel = ui.Label(
-  "Analisis dan Visualisasi Spasial Kualitas Udara",
-  {
-    fontWeight: "bold",
-    fontSize: "1.2rem",
-  }
-);
-
-var infoKlasifikasiROILabel = ui.Label(
-  "[Klik Disini] Informasi Klasifikasi Kualitas Udara",
-  {
-    fontSize: "12px",
-    margin: "2px 15px 2px 15px",
-    textAlign: "justify",
-  },
-  "https://drive.google.com/file/d/1aC6rH7uoVfM9oJCcroJ3zm24942G83fY/view?usp=sharing"
-);
-
-var submitKualitasUdaraROIButton = ui.Button({
-  label: "Submit dan Analisis Kualitas Udara",
-  onClick: function () {
-    uiMap.clear();
-    uiMap.setOptions("HYBRID");
-    uiMap.drawingTools().set("shown", true);
-    ui.root.remove(grafikPanel);
-    ui.root.remove(urlPanel);
-    prosesAnalisisKualitasUdaraROI();
-  },
-  style: { stretch: "horizontal" },
-});
-
-var unduhCitraKualitasUdaraROIButton = ui.Button({
-  label: "Unduh Data Spasial Kualitas Udara",
-  onClick: function () {
-    unduhCitraKualitasUdaraROI();
-    ui.root.remove(grafikPanel);
-  },
-  style: { stretch: "horizontal" },
-});
+komputasiROIPanel.add(infoSubmitROILabel);
+komputasiROIPanel.add(infoKlasifikasiROILabel);
+komputasiROIPanel.add(komputasiROIDropDown);
+komputasiROIPanel.add(submitROIButton);
+komputasiROIPanel.add(unduhCitraROIButton);
 
 var kembaliROIButton = ui.Button({
   label: "Kembali",
@@ -755,7 +878,7 @@ var kembaliROIButton = ui.Button({
 // ############################# PENGATURAN FUNGSI TANGGAL DAN JENIS HALAMAN ROI ######################################
 
 // Deklarasi Variabel Universal Parameter
-var awalWaktuROI, akhirWaktuROI, polutanTerpilihROI;
+var awalWaktuROI, akhirWaktuROI, polutanTerpilihROI, komputasiTerpilihROI;
 
 // Fungsi untuk set Parameter Waktu dan Jenis Polutan
 function setParamsROI() {
@@ -769,6 +892,8 @@ function setParamsROI() {
 
   // Mengambil nilai variabel Jenis Polutan
   polutanTerpilihROI = parameterROIDropDown.getValue();
+  // Mengambil nilai variabel Jenis Komputasi
+  komputasiTerpilihROI = komputasiROIDropDown.getValue();
 }
 
 // Memanggil setTanggal untuk menentukan data Tanggal
@@ -833,7 +958,7 @@ function unduhCitraROI() {
 
     // Memanggil Fungsi Parameter Waktu dan Jenis Polutan
     setParamsROI();
-
+    
     // Mengubah Format Tanggal dan Pengambilan String Informasi Tanggal
     var formatAwalTanggal = awalWaktuROI.format("YYYY-MM-dd").getInfo();
     var formatAkhirTanggal = akhirWaktuROI.format("YYYY-MM-dd").getInfo();
@@ -845,24 +970,8 @@ function unduhCitraROI() {
 
     // Mengatur Penamaan Data yang diunduh agar tidak Spasi
     var ubahNama = polutanTerpilihROI.replace(/ /g, "_");
-    var deskripsiAsli =
-      "Citra_Sentinel_5P" +
-      "_" +
-      ubahNama +
-      "_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal;
-    var deskripsiKonversi =
-      "Citra_Sentinel_5P" +
-      "_" +
-      ubahNama +
-      "_" +
-      "Terkonversi" +
-      "_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal;
+    var deskripsiAsli = "Citra_Sentinel_5P" + "_" + ubahNama + "_" + formatAwalTanggal + "_" + formatAkhirTanggal;
+    var deskripsiKonversi = "Citra_Sentinel_5P" + "_" + ubahNama + "_" + "Terkonversi" +"_" + formatAwalTanggal + "_" + formatAkhirTanggal;
 
     // Mengambil Data Citra dengan Nilai Mean (Rata-Rata) (Asli dan Konversi)
     var meanCitraAsli = col.mean();
@@ -896,35 +1005,12 @@ function unduhCitraROI() {
     });
     var unduhLinkCitraAsli = ui.Label({
       value:
-        "• Link Unduh Citra Sentinel 5P " +
-        polutanTerpilihROI +
-        " " +
-        "(" +
-        formatAwalTanggal +
-        ")" +
-        "-" +
-        "(" +
-        formatAkhirTanggal +
-        ")" +
-        " " +
-        " (mol/m²)",
+        "• Link Unduh Citra Sentinel 5P " + polutanTerpilihROI + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")" + " " + " (mol/m²)",
       targetUrl: downloadUrlCitraAsli,
     });
     var unduhLinkCitraKonversi = ui.Label({
       value:
-        "• Link Unduh Citra Sentinel 5P " +
-        polutanTerpilihROI +
-        " Terkonversi " +
-        " " +
-        "(" +
-        formatAwalTanggal +
-        ")" +
-        "-" +
-        "(" +
-        formatAkhirTanggal +
-        ")" +
-        " " +
-        " (ug/m3)",
+        "• Link Unduh Citra Sentinel 5P " + polutanTerpilihROI + " Terkonversi " + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")" + " " + " (ug/m3)",
       targetUrl: downloadUrlCitraKonversi,
     });
 
@@ -1011,27 +1097,15 @@ function unduhCitraKualitasUdaraROI() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas NO2
   var kelasNO2 = NO2_MeanMikrogram.where(NO2_MeanMikrogram.lte(0.1380165), 1)
-    .where(
-      NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)),
-      2
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)),
-      3
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)),
-      4
-    )
+    .where(NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)), 2)
+    .where(NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)), 3)
+    .where(NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)), 4)
     .where(NO2_MeanMikrogram.gt(1.196144), 5);
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas SO2
   var kelasSO2 = SO2_MeanMikrogram.where(SO2_MeanMikrogram.lte(0.192195), 1)
-    .where(
-      SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)),
-      2
-    )
-    .where(SO2_MeanMikrogram.gt(0.3844).and(SO2_MeanMikrogram.lte(0.51252)), 3)
+    .where(SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)), 2)
+    .where(SO2_MeanMikrogram.gt(0.38440).and(SO2_MeanMikrogram.lte(0.51252)), 3)
     .where(SO2_MeanMikrogram.gt(0.51253).and(SO2_MeanMikrogram.lte(1.2813)), 4)
     .where(SO2_MeanMikrogram.gt(1.2814), 5);
 
@@ -1059,11 +1133,7 @@ function unduhCitraKualitasUdaraROI() {
 
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var downloadUrlCO = kelasCO.getDownloadURL({
-    name:
-      "Kualitas Polutan Karbon Monoksida_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal,
+    name: "Kualitas Polutan Karbon Monoksida_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -1073,10 +1143,7 @@ function unduhCitraKualitasUdaraROI() {
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var downloadUrlNO2 = kelasNO2.getDownloadURL({
     name:
-      "Kualitas Polutan Nitrogen Dioksida_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal,
+      "Kualitas Polutan Nitrogen Dioksida_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -1086,10 +1153,7 @@ function unduhCitraKualitasUdaraROI() {
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var downloadUrlSO2 = kelasSO2.getDownloadURL({
     name:
-      "Kualitas Polutan Sulfur Dioksida_" +
-      formatAwalTanggal +
-      " " +
-      formatAkhirTanggal,
+      "Kualitas Polutan Sulfur Dioksida_" + formatAwalTanggal + " " + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -1098,8 +1162,7 @@ function unduhCitraKualitasUdaraROI() {
 
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var downloadUrlO3 = kelasO3.getDownloadURL({
-    name:
-      "Kualitas Polutan Ozon_" + formatAwalTanggal + "_" + formatAkhirTanggal,
+    name: "Kualitas Polutan Ozon_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -1121,67 +1184,27 @@ function unduhCitraKualitasUdaraROI() {
   });
   var unduhLinkCO = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Karbon Monoksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Karbon Monoksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: downloadUrlCO,
   });
   var unduhLinkNO2 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Nitrogen Dioksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Nitrogen Dioksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: downloadUrlNO2,
   });
   var unduhLinkSO2 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Sulfur Dioksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Sulfur Dioksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: downloadUrlSO2,
   });
   var unduhLinkO3 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Ozon" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Ozon" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: downloadUrlO3,
   });
   var unduhLinkKualitasUdara = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Udara" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Udara" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: downloadUrlKualitasUdara,
   });
 
@@ -1284,7 +1307,7 @@ var visualisasiGrafikCitraROI = function () {
     max: nilaiMaks,
     palette: paletWarna,
   };
-
+  
   // Pembuatan Thumbnail Time-Series untuk Visualisasi Citra secara Time-Series
   // Mengatur Fungsi DOY pada Citra untuk digabungkan
   col = col.map(function (img) {
@@ -1326,7 +1349,7 @@ var visualisasiGrafikCitraROI = function () {
 
   // Menambahkan Citra Hasil Visualisasi Ke Peta
   uiMap.addLayer(col.mean().clip(geometri), parameterVis, namaLayer);
-
+  
   // Mengatur Tengah Peta sesuai dengan Geometri
   uiMap.centerObject(geometri);
 
@@ -1401,13 +1424,9 @@ function grafikKoordinatROI() {
   var koordinatLatROI = parseFloat(latROITextBox.getValue());
   var poinROI = ee.Geometry.Point(koordinatLonROI, koordinatLatROI);
   // uiMap.addLayer(poinROI, {color: '000000'}, 'Titik Lokasi/Koordinat');
-  var titik = ui.Map.Layer(
-    poinROI,
-    { color: "000000" },
-    "Titik Lokasi/Koordinat"
-  );
+  var titik = ui.Map.Layer(poinROI, {color: '000000'}, 'Titik Lokasi/Koordinat');
   uiMap.layers().set(1, titik);
-
+  
   // Memanggil Fungsi untuk set Parameter Waktu dan Jenis Polutan
   setParamsROI();
 
@@ -1433,7 +1452,7 @@ function grafikKoordinatROI() {
   } else {
     namaLayer = "Pilih Parameter Jenis Polutan";
   }
-
+      
   var namaLayerKonversi;
   if (polutanTerpilihROI === "Karbon Monoksida") {
     namaLayerKonversi = "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
@@ -1471,7 +1490,7 @@ function grafikKoordinatROI() {
       pointSize: 3,
     });
 
-  // Membuat Grafik Time-Series Konsentrasi Gas Polutan Terkonversi
+  // Membuat Grafik Time-Series Konsentrasi Gas Polutan Terkonversi 
   var grafikCitraKonversiROI = ui.Chart.image
     .series({
       imageCollection: polutanMean,
@@ -1514,7 +1533,7 @@ function prosesAnalisisKualitasUdaraROI() {
   // Memanggil Fungsi untuk set Parameter Waktu dan Jenis Polutan
   setParamsROI();
 
-  // Mengubah Format Date Object menjadi Tahun-Bulan-Hari
+  // Mengubah Format Date Object menjadi Tahun-Bulan-Hari 
   var formatAwalTanggal = awalWaktuROI.format("YYYY-MM-dd");
   var formatAkhirTanggal = akhirWaktuROI.format("YYYY-MM-dd");
 
@@ -1576,18 +1595,9 @@ function prosesAnalisisKualitasUdaraROI() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas NO2
   var kelasNO2 = NO2_MeanMikrogram.where(NO2_MeanMikrogram.lte(0.1380165), 1)
-    .where(
-      NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)),
-      2
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)),
-      3
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)),
-      4
-    )
+    .where(NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)), 2)
+    .where(NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)), 3)
+    .where(NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)), 4)
     .where(NO2_MeanMikrogram.gt(1.196144), 5);
   uiMap.addLayer(
     kelasNO2,
@@ -1597,11 +1607,8 @@ function prosesAnalisisKualitasUdaraROI() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas SO2
   var kelasSO2 = SO2_MeanMikrogram.where(SO2_MeanMikrogram.lte(0.192195), 1)
-    .where(
-      SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)),
-      2
-    )
-    .where(SO2_MeanMikrogram.gt(0.3844).and(SO2_MeanMikrogram.lte(0.51252)), 3)
+    .where(SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)), 2)
+    .where(SO2_MeanMikrogram.gt(0.38440).and(SO2_MeanMikrogram.lte(0.51252)), 3)
     .where(SO2_MeanMikrogram.gt(0.51253).and(SO2_MeanMikrogram.lte(1.2813)), 4)
     .where(SO2_MeanMikrogram.gt(1.2814), 5);
   uiMap.addLayer(
@@ -1641,10 +1648,10 @@ function prosesAnalisisKualitasUdaraROI() {
     { min: 1, max: 5, palette: ["green", "blue", "yellow", "red", "black"] },
     "Klasifikasi Kualitas Udara"
   );
-
+  
   // Mengatur Tengah Peta sesuai Geometri
   uiMap.centerObject(geometri);
-
+  
   // Memanggil Fungsi Pembuatan Legenda Kualitas Udara
   legendaKualitasUdara();
 }
@@ -1659,26 +1666,20 @@ var roiPanel = ui.Panel({
     petunjukROIButton,
     petunjukROIPanel,
     peringatanROILabel,
-    garisROISeparator,
-    infoTanggalROILabel,
-    infoPemilihanTanggalROILabel,
-    infoTanggalAwalROILabel,
-    awalTanggalROISlider,
-    infoTanggalAkhirROILabel,
-    akhirTanggalROISlider,
-    infoJenisROILabel,
-    parameterROIDropDown,
-    infoWilayahROILabel,
-    infoPemilihanWilayahROILabel,
-    buatGeometriROIButton,
-    hapusGeometriROIButton,
-    infoSubmitROILabel,
-    submitROIButton,
-    unduhCitraROIButton,
-    infoAnalisisROILabel,
-    infoKlasifikasiROILabel,
-    submitKualitasUdaraROIButton,
-    unduhCitraKualitasUdaraROIButton,
+    garisROISeparator1,
+    infoParameterROILabel,
+    waktuROIButton,
+    waktuROIPanel,
+    garisROISeparator2,
+    jenisROIButton,
+    jenisROIPanel,
+    garisROISeparator3,
+    areaROIButton,
+    areaROIPanel,
+    garisROISeparator4,
+    komputasiROIButton,
+    komputasiROIPanel,
+    garisROISeparator5,
     kembaliROIButton,
   ],
   style: {
@@ -1736,7 +1737,7 @@ var adminButton = ui.Button({
   style: { stretch: "horizontal" },
 });
 
-// Melakukan Set Parameter Visualisasi Citra pada Landing Start
+// Melakukan Set Parameter Visualisasi Citra pada Landing Start 
 var parameterVis = {
   min: 0,
   max: 0.1,
@@ -1980,7 +1981,39 @@ var infoAsetLabel = ui.Label(
   }
 );
 
-var garisAsetSeparator = ui.Label(
+var garisAsetSeparator1 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisAsetSeparator2 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisAsetSeparator3 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisAsetSeparator4 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisAsetSeparator5 = ui.Label(
   "_______________________________________________",
   {
     fontWeight: "bold",
@@ -2058,9 +2091,32 @@ var peringatanAsetLabel = ui.Label(
   }
 );
 
-var infoTanggalAsetLabel = ui.Label("Pilih Rentang Waktu Perekaman", {
-  fontWeight: "bold",
-  fontSize: "1.2rem",
+var infoParameterAsetLabel = ui.Label(
+  "PARAMETER PEMANTAUAN KUALITAS UDARA",
+  {
+    fontWeight: "bold",
+    fontSize: "1.2rem",
+    textAlign: "center",
+  }
+);
+
+var waktuAsetButton = ui.Button({
+  label: "RENTANG WAKTU PEREKAMAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var waktuAsetPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+waktuAsetButton.onClick(function () {
+  if (waktuAsetPanel.style().get("shown")) {
+    waktuAsetButton.setLabel("RENTANG WAKTU PEREKAMAN");
+    waktuAsetPanel.style().set("shown", false);
+  } else {
+    waktuAsetButton.setLabel("PILIH RENTANG WAKTU PEREKAMAN");
+    waktuAsetPanel.style().set("shown", true);
+  }
 });
 
 var infoPemilihanTanggalAsetLabel = ui.Label(
@@ -2097,9 +2153,34 @@ var akhirTanggalAsetSlider = ui.DateSlider({
   style: { width: "300px" },
 });
 
-var infoJenisAsetLabel = ui.Label("Pilih Jenis Gas Polutan", {
+waktuAsetPanel.add(infoPemilihanTanggalAsetLabel);
+waktuAsetPanel.add(infoTanggalAwalAsetLabel);
+waktuAsetPanel.add(awalTanggalAsetSlider);
+waktuAsetPanel.add(infoTanggalAkhirAsetLabel);
+waktuAsetPanel.add(akhirTanggalAsetSlider);
+
+var jenisAsetButton = ui.Button({
+  label: "JENIS GAS POLUTAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var jenisAsetPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+jenisAsetButton.onClick(function () {
+  if (jenisAsetPanel.style().get("shown")) {
+    jenisAsetButton.setLabel("JENIS GAS POLUTAN");
+    jenisAsetPanel.style().set("shown", false);
+  } else {
+    jenisAsetButton.setLabel("PILIH JENIS GAS POLUTAN");
+    jenisAsetPanel.style().set("shown", true);
+  }
+});
+
+var infoJenisAsetLabel = ui.Label("Gas Polutan CO, NO₂, SO₂ dan O₃", {
+  fontSize: "15px",
   fontWeight: "bold",
-  fontSize: "1.2rem",
 });
 
 var parameterAsetDropDown = ui.Select({
@@ -2111,9 +2192,26 @@ var parameterAsetDropDown = ui.Select({
   style: { stretch: "horizontal" },
 });
 
-var infoWilayahAsetLabel = ui.Label("Kelola Area Wilayah Kajian", {
-  fontWeight: "bold",
-  fontSize: "1.2rem",
+jenisAsetPanel.add(infoJenisAsetLabel);
+jenisAsetPanel.add(parameterAsetDropDown);
+
+var areaAsetButton = ui.Button({
+  label: "AREA WILAYAH KAJIAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var areaAsetPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+areaAsetButton.onClick(function () {
+  if (areaAsetPanel.style().get("shown")) {
+    areaAsetButton.setLabel("AREA WILAYAH KAJIAN");
+    areaAsetPanel.style().set("shown", false);
+  } else {
+    areaAsetButton.setLabel("KELOLA AREA WILAYAH KAJIAN");
+    areaAsetPanel.style().set("shown", true);
+  }
 });
 
 var infoPemilihanWilayahAsetLabel = ui.Label(
@@ -2145,13 +2243,9 @@ var asetInputTextBox = ui.Textbox({
   placeholder: "Input Lokasi Penyimpanan Aset",
 });
 
-var infoSubmitAsetLabel = ui.Label(
-  "Analisis dan Visualisasi Spasial Konsentrasi Gas Polutan",
-  {
-    fontWeight: "bold",
-    fontSize: "1.2rem",
-  }
-);
+areaAsetPanel.add(infoPemilihanWilayahAsetLabel);
+areaAsetPanel.add(tipeAsetDropDown);
+areaAsetPanel.add(asetInputTextBox);
 
 var judulkoordinatAsetLabel = ui.Label(
   "Kelola Koordinat untuk Analisis Dinamika Konsentrasi Polutan",
@@ -2197,161 +2291,27 @@ var koordinatAsetButton = ui.Button({
   style: { stretch: "horizontal" },
 });
 
-var submitAsetButton = ui.Button({
-  label: "Submit dan Analisis Konsentrasi Polutan",
-  onClick: function () {
-    // Memanggil Data Geometri Hasil import untuk memotong Citra
-    var geom = importAsetGeometri();
-    if (geom) {
-      geometri = geom;
-      clipCitraAset();
-    }
-    uiMap.clear();
-    uiMap.drawingTools().set("shown", false);
-    grafikPanel.clear();
-    ui.root.remove(grafikPanel);
-
-    // Menambahkan Beberapa Widgets ke dalam Grafik Panel
-    var grafikKonsentrasiCitraAset = visualisasiGrafikCitraAset();
-    var grafikKonsentrasiCitraKonversiAset =
-      visualisasiGrafikCitraKonversiAset();
-    grafikPanel.add(grafikKonsentrasiCitraAset);
-    grafikPanel.add(grafikKonsentrasiCitraKonversiAset);
-    grafikPanel.add(judulkoordinatAsetLabel);
-    grafikPanel.add(infoKoordinatAsetLabel);
-    grafikPanel.add(infoLongitudeAsetLabel);
-    grafikPanel.add(lonAsetTextBox);
-    grafikPanel.add(infoLatitudeAsetLabel);
-    grafikPanel.add(latAsetTextBox);
-    grafikPanel.add(koordinatAsetButton);
-
-    // Callback Onclick pada Peta untuk mengambil Koordinat dan Ekstraksi Kalkukasi Dinamika Konsentrasi
-    uiMap.onClick(function (coords) {
-      // Mengambil Nilai Koordinat ke dalam TextBox
-      lonAsetTextBox.setValue(coords.lon.toFixed(5));
-      latAsetTextBox.setValue(coords.lat.toFixed(5));
-      var poinKlikAset = ee.Geometry.Point(coords.lon, coords.lat);
-      var titik = ui.Map.Layer(
-        poinKlikAset,
-        { color: "000000" },
-        "Titik Lokasi/Koordinat"
-      );
-      uiMap.layers().set(2, titik);
-
-      // Memanggil Fungsi Set Parameter Tanggal dan Jenis Polutan
-      setParamsAset();
-
-      var formatAwalTanggal = awalWaktuAset.format("YYYY-MM-dd");
-      var formatAkhirTanggal = akhirWaktuAset.format("YYYY-MM-dd");
-
-      // Memilih Citra yang telah dipilih sesuai Parameter
-      var hasilCitra = handleCitra(formatAwalTanggal, formatAkhirTanggal);
-      var col = hasilCitra.col;
-      var polutanMean = hasilCitra.polutanMean;
-
-      // Mengatur Nama Layer sesuai Parameter Terpilih
-      var namaLayer;
-      if (polutanTerpilihAset === "Karbon Monoksida") {
-        namaLayer = "Konsentrasi Gas Karbon Monoksida (mol/m²)";
-      } else if (polutanTerpilihAset === "Nitrogen Dioksida") {
-        namaLayer = "Konsentrasi Gas Nitrogen Dioksida (mol/m²)";
-      } else if (polutanTerpilihAset === "Sulfur Dioksida") {
-        namaLayer = "Konsentrasi Gas Sulfur Dioksida (mol/m²)";
-      } else if (polutanTerpilihAset === "Ozon") {
-        namaLayer = "Konsentrasi Gas Ozon (mol/m²)";
-      } else {
-        namaLayer = "Pilih Parameter Jenis Polutan";
-      }
-
-      var namaLayerKonversi;
-      if (polutanTerpilihAset === "Karbon Monoksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
-      } else if (polutanTerpilihAset === "Nitrogen Dioksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Nitrogen Dioksida Terkonversi (µg/m³)";
-      } else if (polutanTerpilihAset === "Sulfur Dioksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Sulfur Dioksida Terkonversi (µg/m³)";
-      } else if (polutanTerpilihAset === "Ozon") {
-        namaLayerKonversi = "Konsentrasi Gas Ozon Terkonversi (µg/m³)";
-      } else {
-        namaLayerKonversi = "Pilih Parameter Jenis Polutan";
-      }
-
-      // Membuat Grafik Time-Series Konsentrasi Gas Polutan
-      var grafikCitraAsliAset = ui.Chart.image
-        .series({
-          imageCollection: col,
-          region: poinKlikAset,
-          reducer: ee.Reducer.mean(),
-          scale: 1000,
-        })
-        .setChartType("LineChart")
-        .setSeriesNames([
-          "Konsentrasi Gas " + polutanTerpilihAset + " (mol/m²)",
-        ])
-        .setOptions({
-          title: namaLayer,
-          interpolateNulls: true,
-          bestEffort: true,
-          maxPixels: 1e10,
-          hAxis: {
-            title: "Waktu",
-          },
-          vAxis: {
-            title: "Konsentrasi Gas (mol/m²)",
-          },
-          lineWidth: 2,
-          pointSize: 3,
-        });
-
-      // Membuat Grafik Time-Series Konsentrasi Gas Polutan Terkonversi
-      var grafikCitraKonversiAset = ui.Chart.image
-        .series({
-          imageCollection: polutanMean,
-          region: poinKlikAset,
-          reducer: ee.Reducer.mean(),
-          scale: 1000,
-        })
-        .setChartType("LineChart")
-        .setSeriesNames(["Konsentrasi Gas " + polutanTerpilihAset + " (µg/m³)"])
-        .setOptions({
-          title: namaLayerKonversi,
-          interpolateNulls: true,
-          bestEffort: true,
-          maxPixels: 1e10,
-          hAxis: {
-            title: "Waktu",
-          },
-          vAxis: {
-            title: "Konsentrasi Gas (µg/m³)",
-          },
-          lineWidth: 2,
-          pointSize: 3,
-        });
-
-      grafikPanel.widgets().set(0, grafikCitraAsliAset);
-      grafikPanel.widgets().set(1, grafikCitraKonversiAset);
-    });
-    uiMap.setOptions("HYBRID");
-    ui.root.remove(urlPanel);
-    ui.root.insert(0, grafikPanel);
-  },
-  style: { stretch: "horizontal" },
+var komputasiAsetButton = ui.Button({
+  label: "KOMPUTASI DAN ANALISIS",
+  style: { stretch: "horizontal", color: "black" },
+});
+var komputasiAsetPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
 });
 
-var unduhCitraAsetButton = ui.Button({
-  label: "Unduh Data Spasial Konsentrasi Polutan",
-  onClick: function () {
-    unduhCitraAset();
-    ui.root.remove(grafikPanel);
-  },
-  style: { stretch: "horizontal" },
+komputasiAsetButton.onClick(function () {
+  if (komputasiAsetPanel.style().get("shown")) {
+    komputasiAsetButton.setLabel("KOMPUTASI DAN ANALISIS");
+    komputasiAsetPanel.style().set("shown", false);
+  } else {
+    komputasiAsetButton.setLabel("PILIH JENIS KOMPUTASI DAN ANALISIS");
+    komputasiAsetPanel.style().set("shown", true);
+  }
 });
 
-var infoAnalisisAsetLabel = ui.Label(
-  "Analisis dan Visualisasi Spasial Kualitas Udara",
+var infoSubmitAsetLabel = ui.Label(
+  "Komputasi dan Visualisasi Spasial",
   {
     fontWeight: "bold",
     fontSize: "1.2rem",
@@ -2368,27 +2328,189 @@ var infoKlasifikasiAsetLabel = ui.Label(
   "https://drive.google.com/file/d/1aC6rH7uoVfM9oJCcroJ3zm24942G83fY/view?usp=sharing"
 );
 
-var submitKualitasUdaraAsetButton = ui.Button({
-  label: "Submit dan Analisis Kualitas Udara",
+var komputasiAsetDropDown = ui.Select({
+  items: ["Konsentrasi Polutan", "Kualitas Udara"],
+  placeholder: "Pilih Jenis Komputasi",
+  onChange: function (selected) {},
+  style: { stretch: "horizontal" },
+});
+
+var submitAsetButton = ui.Button({
+  label: "Submit dan Analisis",
   onClick: function () {
-    uiMap.clear();
-    uiMap.setOptions("HYBRID");
-    uiMap.drawingTools().set("shown", false);
-    ui.root.remove(grafikPanel);
-    ui.root.remove(urlPanel);
-    prosesAnalisisKualitasUdaraAset();
+    setParamsAset();
+    if (komputasiTerpilihAset === "Konsentrasi Polutan") {
+        // Memanggil Data Geometri Hasil import untuk memotong Citra
+        var geom = importAsetGeometri();
+        if (geom) {
+          geometri = geom;
+          clipCitraAset();
+        }
+        uiMap.clear();
+        uiMap.drawingTools().set("shown", false);
+        grafikPanel.clear();
+        ui.root.remove(grafikPanel);
+
+        // Menambahkan Beberapa Widgets ke dalam Grafik Panel
+        var grafikKonsentrasiCitraAset = visualisasiGrafikCitraAset();
+        var grafikKonsentrasiCitraKonversiAset = visualisasiGrafikCitraKonversiAset();
+        grafikPanel.add(grafikKonsentrasiCitraAset);
+        grafikPanel.add(grafikKonsentrasiCitraKonversiAset);
+        grafikPanel.add(judulkoordinatAsetLabel);
+        grafikPanel.add(infoKoordinatAsetLabel);
+        grafikPanel.add(infoLongitudeAsetLabel);
+        grafikPanel.add(lonAsetTextBox);
+        grafikPanel.add(infoLatitudeAsetLabel);
+        grafikPanel.add(latAsetTextBox);
+        grafikPanel.add(koordinatAsetButton);
+
+        // Callback Onclick pada Peta untuk mengambil Koordinat dan Ekstraksi Kalkukasi Dinamika Konsentrasi
+        uiMap.onClick(function (coords) {
+          // Mengambil Nilai Koordinat ke dalam TextBox
+          lonAsetTextBox.setValue(coords.lon.toFixed(5));
+          latAsetTextBox.setValue(coords.lat.toFixed(5));
+          var poinKlikAset = ee.Geometry.Point(coords.lon, coords.lat);
+          var titik = ui.Map.Layer(poinKlikAset, {color: '000000'}, 'Titik Lokasi/Koordinat');
+          uiMap.layers().set(2, titik);
+
+          // Memanggil Fungsi Set Parameter Tanggal dan Jenis Polutan
+          setParamsAset();
+  
+          var formatAwalTanggal = awalWaktuAset.format("YYYY-MM-dd");
+          var formatAkhirTanggal = akhirWaktuAset.format("YYYY-MM-dd");
+  
+          // Memilih Citra yang telah dipilih sesuai Parameter
+          var hasilCitra = handleCitra(formatAwalTanggal, formatAkhirTanggal);
+          var col = hasilCitra.col;
+          var polutanMean = hasilCitra.polutanMean;
+  
+          // Mengatur Nama Layer sesuai Parameter Terpilih
+          var namaLayer;
+          if (polutanTerpilihAset === "Karbon Monoksida") {
+            namaLayer = "Konsentrasi Gas Karbon Monoksida (mol/m²)";
+          } else if (polutanTerpilihAset === "Nitrogen Dioksida") {
+            namaLayer = "Konsentrasi Gas Nitrogen Dioksida (mol/m²)";
+          } else if (polutanTerpilihAset === "Sulfur Dioksida") {
+            namaLayer = "Konsentrasi Gas Sulfur Dioksida (mol/m²)";
+          } else if (polutanTerpilihAset === "Ozon") {
+            namaLayer = "Konsentrasi Gas Ozon (mol/m²)";
+          } else {
+            namaLayer = "Pilih Parameter Jenis Polutan";
+          }
+          
+          var namaLayerKonversi;
+          if (polutanTerpilihAset === "Karbon Monoksida") {
+            namaLayerKonversi = "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
+          } else if (polutanTerpilihAset === "Nitrogen Dioksida") {
+            namaLayerKonversi = "Konsentrasi Gas Nitrogen Dioksida Terkonversi (µg/m³)";
+          } else if (polutanTerpilihAset === "Sulfur Dioksida") {
+            namaLayerKonversi = "Konsentrasi Gas Sulfur Dioksida Terkonversi (µg/m³)";
+          } else if (polutanTerpilihAset === "Ozon") {
+            namaLayerKonversi = "Konsentrasi Gas Ozon Terkonversi (µg/m³)";
+          } else {
+            namaLayerKonversi = "Pilih Parameter Jenis Polutan";
+          }
+    
+          // Membuat Grafik Time-Series Konsentrasi Gas Polutan
+          var grafikCitraAsliAset = ui.Chart.image
+            .series({
+              imageCollection: col,
+              region: poinKlikAset,
+              reducer: ee.Reducer.mean(),
+              scale: 1000,
+            })
+            .setChartType("LineChart")
+            .setSeriesNames([
+              "Konsentrasi Gas " + polutanTerpilihAset + " (mol/m²)",
+            ])
+            .setOptions({
+              title: namaLayer,
+              interpolateNulls: true,
+              bestEffort: true,
+              maxPixels: 1e10,
+              hAxis: {
+                title: "Waktu",
+              },
+              vAxis: {
+                title: "Konsentrasi Gas (mol/m²)",
+              },
+              lineWidth: 2,
+              pointSize: 3,
+            });
+    
+          // Membuat Grafik Time-Series Konsentrasi Gas Polutan Terkonversi
+          var grafikCitraKonversiAset = ui.Chart.image
+            .series({
+              imageCollection: polutanMean,
+              region: poinKlikAset,
+              reducer: ee.Reducer.mean(),
+              scale: 1000,
+            })
+            .setChartType("LineChart")
+            .setSeriesNames(["Konsentrasi Gas " + polutanTerpilihAset + " (µg/m³)"])
+            .setOptions({
+              title: namaLayerKonversi,
+              interpolateNulls: true,
+              bestEffort: true,
+              maxPixels: 1e10,
+              hAxis: {
+                title: "Waktu",
+              },
+              vAxis: {
+                title: "Konsentrasi Gas (µg/m³)",
+              },
+              lineWidth: 2,
+              pointSize: 3,
+            });
+    
+          grafikPanel.widgets().set(0, grafikCitraAsliAset);
+          grafikPanel.widgets().set(1, grafikCitraKonversiAset);
+        });
+        uiMap.setOptions("HYBRID");
+        ui.root.remove(urlPanel);
+        ui.root.insert(0, grafikPanel);
+      } else if (komputasiTerpilihAset === "Kualitas Udara") {
+        uiMap.clear();
+        uiMap.setOptions("HYBRID");
+        uiMap.drawingTools().set("shown", false);
+        ui.root.remove(grafikPanel);
+        ui.root.remove(urlPanel);
+        prosesAnalisisKualitasUdaraAset();
+      } else {
+        uiMap.clear();
+        uiMap.setOptions("HYBRID");
+        uiMap.drawingTools().set("shown", false);
+        ui.root.remove(grafikPanel);
+        ui.root.remove(urlPanel);
+        prosesAnalisisKualitasUdaraAset();
+      }
   },
   style: { stretch: "horizontal" },
 });
 
-var unduhCitraKualitasUdaraAsetButton = ui.Button({
-  label: "Unduh Data Spasial Kualitas Udara",
+var unduhCitraAsetButton = ui.Button({
+  label: "Unduh Data Spasial",
   onClick: function () {
-    unduhCitraKualitasUdaraAset();
-    ui.root.remove(grafikPanel);
+    setParamsAset();
+    if (komputasiTerpilihAset === "Konsentrasi Polutan") {
+        unduhCitraAset();
+        ui.root.remove(grafikPanel);
+       } else if (komputasiTerpilihAset === "Kualitas Udara") {
+        unduhCitraKualitasUdaraAset();
+        ui.root.remove(grafikPanel);
+       } else {
+        unduhCitraKualitasUdaraAset();
+        ui.root.remove(grafikPanel);
+       }
   },
   style: { stretch: "horizontal" },
 });
+
+komputasiAsetPanel.add(infoSubmitAsetLabel);
+komputasiAsetPanel.add(infoKlasifikasiAsetLabel);
+komputasiAsetPanel.add(komputasiAsetDropDown);
+komputasiAsetPanel.add(submitAsetButton);
+komputasiAsetPanel.add(unduhCitraAsetButton);
 
 var kembaliAsetButton = ui.Button({
   label: "Kembali",
@@ -2410,7 +2532,7 @@ var kembaliAsetButton = ui.Button({
 // ############################# PENGATURAN FUNGSI TANGGAL DAN JENIS HALAMAN ROI ######################################
 
 // Deklarasi Variabel Universal
-var awalWaktuAset, akhirWaktuAset, polutanTerpilihAset;
+var awalWaktuAset, akhirWaktuAset, polutanTerpilihAset, komputasiTerpilihAset;
 
 // Fungsi untuk set Parameter Waktu dan Jenis Polutan
 function setParamsAset() {
@@ -2424,6 +2546,7 @@ function setParamsAset() {
 
   // Mengambil nilai variabel Jenis Polutan
   polutanTerpilihAset = parameterAsetDropDown.getValue();
+  komputasiTerpilihAset = komputasiAsetDropDown.getValue();
 }
 
 // Memanggil setTanggal untuk menentukan data Tanggal
@@ -2443,9 +2566,9 @@ function importAsetGeometri() {
   // Mengolah String Nilai Aset ke dalam Geometri/Feature Collection
   var aset = ee.FeatureCollection(asetId);
   geometri = aset.geometry();
-  geometri = geometri.simplify({ maxError: 1000 });
-
-  // Melakukan Return Grafik
+  geometri = geometri.simplify({'maxError': 1000});
+  
+  // Melakukan Return Grafik 
   return geometri;
 }
 
@@ -2499,24 +2622,8 @@ function unduhCitraAset() {
 
     // Mengatur Penamaan Data yang diunduh untuk menghilangkan spasi
     var ubahNama = polutanTerpilihAset.replace(/ /g, "_"); // Replace spaces with underscores
-    var deskripsiAsli =
-      "Citra_Sentinel_5P" +
-      "_" +
-      ubahNama +
-      "_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal;
-    var deskripsiKonversi =
-      "Citra_Sentinel_5P" +
-      "_" +
-      ubahNama +
-      "_" +
-      "Terkonversi" +
-      "_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal;
+    var deskripsiAsli = "Citra_Sentinel_5P" + "_" + ubahNama + "_" + formatAwalTanggal + "_" + formatAkhirTanggal;
+     var deskripsiKonversi = "Citra_Sentinel_5P" + "_" + ubahNama + "_" + "Terkonversi" +"_" + formatAwalTanggal + "_" + formatAkhirTanggal;
 
     // Mengambil Data Citra dengan Nilai Mean (Rata-Rata) (Asli dan Konversi)
     var meanCitraAsli = col.mean();
@@ -2547,35 +2654,12 @@ function unduhCitraAset() {
     var urlLabel = ui.Label("Click to Download: ");
     var unduhLinkCitraAsli = ui.Label({
       value:
-        "Link Unduh Citra Sentinel 5P " +
-        polutanTerpilihAset +
-        " " +
-        "(" +
-        formatAwalTanggal +
-        ")" +
-        "-" +
-        "(" +
-        formatAkhirTanggal +
-        ")" +
-        " " +
-        " (mol/m²)",
+        "Link Unduh Citra Sentinel 5P " + polutanTerpilihAset + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")" + " " + " (mol/m²)",
       targetUrl: downloadUrlCitraAsli,
     });
     var unduhLinkCitraKonversi = ui.Label({
       value:
-        "Link Unduh Citra Sentinel 5P " +
-        polutanTerpilihAset +
-        " Terkonversi " +
-        " " +
-        "(" +
-        formatAwalTanggal +
-        ")" +
-        "-" +
-        "(" +
-        formatAkhirTanggal +
-        ")" +
-        " " +
-        " (ug/m3)",
+        "Link Unduh Citra Sentinel 5P " + polutanTerpilihAset + " Terkonversi " + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")" + " " + " (ug/m3)",
       targetUrl: unduhUrlCitraKonversi,
     });
 
@@ -2663,27 +2747,15 @@ function unduhCitraKualitasUdaraAset() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas NO2
   var kelasNO2 = NO2_MeanMikrogram.where(NO2_MeanMikrogram.lte(0.1380165), 1)
-    .where(
-      NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)),
-      2
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)),
-      3
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)),
-      4
-    )
+    .where(NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)), 2)
+    .where(NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)), 3)
+    .where(NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)), 4)
     .where(NO2_MeanMikrogram.gt(1.196144), 5);
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas SO2
   var kelasSO2 = SO2_MeanMikrogram.where(SO2_MeanMikrogram.lte(0.192195), 1)
-    .where(
-      SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)),
-      2
-    )
-    .where(SO2_MeanMikrogram.gt(0.3844).and(SO2_MeanMikrogram.lte(0.51252)), 3)
+    .where(SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)), 2)
+    .where(SO2_MeanMikrogram.gt(0.38440).and(SO2_MeanMikrogram.lte(0.51252)), 3)
     .where(SO2_MeanMikrogram.gt(0.51253).and(SO2_MeanMikrogram.lte(1.2813)), 4)
     .where(SO2_MeanMikrogram.gt(1.2814), 5);
 
@@ -2694,7 +2766,7 @@ function unduhCitraKualitasUdaraAset() {
     .where(O3_MeanMikrogram.gt(1.199926).and(O3_MeanMikrogram.lte(1.583901)), 4)
     .where(O3_MeanMikrogram.gt(1.583902), 5);
 
-  // Melakukan Overlay Kualitas Udara (CO, NO2, SO2, O3)
+  // Melakukan Overlay Kualitas Udara (CO, NO2, SO2, O3) 
   var kualitasudara = kelasCO
     .add(kelasNO2)
     .add(kelasSO2)
@@ -2711,11 +2783,7 @@ function unduhCitraKualitasUdaraAset() {
 
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var unduhUrlCO = kelasCO.getDownloadURL({
-    name:
-      "Kualitas Polutan Karbon Monoksida_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal,
+    name: "Kualitas Polutan Karbon Monoksida_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -2725,10 +2793,7 @@ function unduhCitraKualitasUdaraAset() {
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var unduhUrlNO2 = kelasNO2.getDownloadURL({
     name:
-      "Kualitas Polutan Nitrogen Dioksida_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal,
+      "Kualitas Polutan Nitrogen Dioksida_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -2738,10 +2803,7 @@ function unduhCitraKualitasUdaraAset() {
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var unduhUrlSO2 = kelasSO2.getDownloadURL({
     name:
-      "Kualitas Polutan Sulfur Dioksida_" +
-      formatAwalTanggal +
-      " " +
-      formatAkhirTanggal,
+      "Kualitas Polutan Sulfur Dioksida_" + formatAwalTanggal + " " + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -2750,8 +2812,7 @@ function unduhCitraKualitasUdaraAset() {
 
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var unduhUrlO3 = kelasO3.getDownloadURL({
-    name:
-      "Kualitas Polutan Ozon_" + formatAwalTanggal + "_" + formatAkhirTanggal,
+    name: "Kualitas Polutan Ozon_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -2773,67 +2834,27 @@ function unduhCitraKualitasUdaraAset() {
   });
   var unduhLinkCO = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Karbon Monoksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Karbon Monoksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlCO,
   });
   var unduhLinkNO2 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Nitrogen Dioksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Nitrogen Dioksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlNO2,
   });
   var unduhLinkSO2 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Sulfur Dioksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Sulfur Dioksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlSO2,
   });
   var unduhLinkO3 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Ozon" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Ozon" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlO3,
   });
   var unduhLinkKualitasUdara = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Udara" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Udara" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlKualitasUdara,
   });
 
@@ -2979,20 +3000,19 @@ var visualisasiGrafikCitraAset = function () {
 
   // Menambahkan Citra Hasil Visualisasi Ke Peta dan Mengatur Tengah Peta sesuai Geometri
   uiMap.addLayer(col.mean().clip(geometri), parameterVis, namaLayer);
-
+  
   // Menampilkan Batas Admin
   var emptyGeometri = ee.Image().byte();
   var outlineGeometri = emptyGeometri.paint({
     featureCollection: geometri,
     color: 1,
-    width: 2,
-  });
-  uiMap.addLayer(outlineGeometri, { palette: "000000" }, "Batas Geometri");
+    width: 2});
+  uiMap.addLayer(outlineGeometri, {palette: '000000'}, 'Batas Geometri');
   uiMap.centerObject(geometri);
-
+  
   // Mengimplementasi Pembuatan Legenda Polutan menggunakan Citra Col
   legendaPolutan(col);
-
+  
   // Melakukan Return Grafik
   return chart;
 };
@@ -3063,16 +3083,12 @@ function grafikKoordinatAset() {
   var koordinatLonAset = parseFloat(lonAsetTextBox.getValue());
   var koordinatLatAset = parseFloat(latAsetTextBox.getValue());
   var poinAset = ee.Geometry.Point(koordinatLonAset, koordinatLatAset);
-  var titik = ui.Map.Layer(
-    poinAset,
-    { color: "000000" },
-    "Titik Lokasi/Koordinat"
-  );
+  var titik = ui.Map.Layer(poinAset, {color: '000000'}, 'Titik Lokasi/Koordinat');
   uiMap.layers().set(2, titik);
-
+  
   // Memanggil Fungsi untuk set Parameter Waktu dan Jenis Polutan
   setParamsAset();
-
+  
   // Mengubah Format Date Object menjadi Tahun-Bulan-Hari
   var formatAwalTanggal = awalWaktuAset.format("YYYY-MM-dd");
   var formatAkhirTanggal = akhirWaktuAset.format("YYYY-MM-dd");
@@ -3095,7 +3111,7 @@ function grafikKoordinatAset() {
   } else {
     namaLayer = "Pilih Parameter Jenis Polutan";
   }
-
+      
   var namaLayerKonversi;
   if (polutanTerpilihAset === "Karbon Monoksida") {
     namaLayerKonversi = "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
@@ -3172,7 +3188,7 @@ function prosesAnalisisKualitasUdaraAset() {
   var feature = ee.Feature(geom, {});
 
   // Memanggil Fungsi untuk set Parameter Waktu dan Jenis Polutan
-  setParamsROI();
+  setParamsAset();
 
   // Mengubah Format Date Object menjadi Tahun-Bulan-Hari
   var formatAwalTanggal = awalWaktuAset.format("YYYY-MM-dd");
@@ -3236,18 +3252,9 @@ function prosesAnalisisKualitasUdaraAset() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas NO2
   var kelasNO2 = NO2_MeanMikrogram.where(NO2_MeanMikrogram.lte(0.1380165), 1)
-    .where(
-      NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)),
-      2
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)),
-      3
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)),
-      4
-    )
+    .where(NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)), 2)
+    .where(NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)), 3)
+    .where(NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)), 4)
     .where(NO2_MeanMikrogram.gt(1.196144), 5);
   uiMap.addLayer(
     kelasNO2,
@@ -3257,11 +3264,8 @@ function prosesAnalisisKualitasUdaraAset() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas SO2
   var kelasSO2 = SO2_MeanMikrogram.where(SO2_MeanMikrogram.lte(0.192195), 1)
-    .where(
-      SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)),
-      2
-    )
-    .where(SO2_MeanMikrogram.gt(0.3844).and(SO2_MeanMikrogram.lte(0.51252)), 3)
+    .where(SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)), 2)
+    .where(SO2_MeanMikrogram.gt(0.38440).and(SO2_MeanMikrogram.lte(0.51252)), 3)
     .where(SO2_MeanMikrogram.gt(0.51253).and(SO2_MeanMikrogram.lte(1.2813)), 4)
     .where(SO2_MeanMikrogram.gt(1.2814), 5);
   uiMap.addLayer(
@@ -3301,19 +3305,18 @@ function prosesAnalisisKualitasUdaraAset() {
     { min: 1, max: 5, palette: ["green", "blue", "yellow", "red", "black"] },
     "Klasifikasi Kualitas Udara"
   );
-
+  
   // Menampilkan Batas Admin
   var emptyGeometri = ee.Image().byte();
   var outlineGeometri = emptyGeometri.paint({
     featureCollection: geometri,
     color: 1,
-    width: 2,
-  });
-  uiMap.addLayer(outlineGeometri, { palette: "000000" }, "Batas Geometri");
-
+    width: 2});
+  uiMap.addLayer(outlineGeometri, {palette: '000000'}, 'Batas Geometri');
+  
   // Mengatur Tengah Peta Sesuai Geometri
   uiMap.centerObject(geometri);
-
+  
   // Memanggil Fungsi Pembuatan Legenda Kualitas Udara
   legendaKualitasUdara();
 }
@@ -3328,26 +3331,20 @@ var asetPanel = ui.Panel({
     petunjukAsetButton,
     petunjukAsetPanel,
     peringatanAsetLabel,
-    garisAsetSeparator,
-    infoTanggalAsetLabel,
-    infoPemilihanTanggalAsetLabel,
-    infoTanggalAwalAsetLabel,
-    awalTanggalAsetSlider,
-    infoTanggalAkhirAsetLabel,
-    akhirTanggalAsetSlider,
-    infoJenisAsetLabel,
-    parameterAsetDropDown,
-    infoWilayahAsetLabel,
-    infoPemilihanWilayahAsetLabel,
-    tipeAsetDropDown,
-    asetInputTextBox,
-    infoSubmitAsetLabel,
-    submitAsetButton,
-    unduhCitraAsetButton,
-    infoAnalisisAsetLabel,
-    infoKlasifikasiAsetLabel,
-    submitKualitasUdaraAsetButton,
-    unduhCitraKualitasUdaraAsetButton,
+    garisAsetSeparator1,
+    infoParameterAsetLabel,
+    waktuAsetButton,
+    waktuAsetPanel,
+    garisAsetSeparator2,
+    jenisAsetButton,
+    jenisAsetPanel,
+    garisAsetSeparator3,
+    areaAsetButton,
+    areaAsetPanel,
+    garisAsetSeparator4,
+    komputasiAsetButton,
+    komputasiAsetPanel,
+    garisAsetSeparator5,
     kembaliAsetButton,
   ],
   style: {
@@ -3372,7 +3369,39 @@ var infoAdminLabel = ui.Label(
   }
 );
 
-var garisAdminSeparator = ui.Label(
+var garisAdminSeparator1 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisAdminSeparator2 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisAdminSeparator3 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisAdminSeparator4 = ui.Label(
+  "_______________________________________________",
+  {
+    fontWeight: "bold",
+    color: "blue",
+  }
+);
+
+var garisAdminSeparator5 = ui.Label(
   "_______________________________________________",
   {
     fontWeight: "bold",
@@ -3450,9 +3479,32 @@ var peringatanAdminLabel = ui.Label(
   }
 );
 
-var infoTanggalAdminLabel = ui.Label("Pilih Rentang Waktu Perekaman", {
-  fontWeight: "bold",
-  fontSize: "1.2rem",
+var infoParameterAdminLabel = ui.Label(
+  "PARAMETER PEMANTAUAN KUALITAS UDARA",
+  {
+    fontWeight: "bold",
+    fontSize: "1.2rem",
+    textAlign: "center",
+  }
+);
+
+var waktuAdminButton = ui.Button({
+  label: "RENTANG WAKTU PEREKAMAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var waktuAdminPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+waktuAdminButton.onClick(function () {
+  if (waktuAdminPanel.style().get("shown")) {
+    waktuAdminButton.setLabel("RENTANG WAKTU PEREKAMAN");
+    waktuAdminPanel.style().set("shown", false);
+  } else {
+    waktuAdminButton.setLabel("PILIH RENTANG WAKTU PEREKAMAN");
+    waktuAdminPanel.style().set("shown", true);
+  }
 });
 
 var infoPemilihanTanggalAdminLabel = ui.Label(
@@ -3489,9 +3541,34 @@ var akhirTanggalAdminSlider = ui.DateSlider({
   style: { width: "300px" },
 });
 
-var infoJenisAdminLabel = ui.Label("Pilih Jenis Gas Polutan", {
+waktuAdminPanel.add(infoPemilihanTanggalAdminLabel);
+waktuAdminPanel.add(infoTanggalAwalAdminLabel);
+waktuAdminPanel.add(awalTanggalAdminSlider);
+waktuAdminPanel.add(infoTanggalAkhirAdminLabel);
+waktuAdminPanel.add(akhirTanggalAdminSlider);
+
+var jenisAdminButton = ui.Button({
+  label: "JENIS GAS POLUTAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var jenisAdminPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+jenisAdminButton.onClick(function () {
+  if (jenisAdminPanel.style().get("shown")) {
+    jenisAdminButton.setLabel("JENIS GAS POLUTAN");
+    jenisAdminPanel.style().set("shown", false);
+  } else {
+    jenisAdminButton.setLabel("PILIH JENIS GAS POLUTAN");
+    jenisAdminPanel.style().set("shown", true);
+  }
+});
+
+var infoJenisAdminLabel = ui.Label("Gas Polutan CO, NO₂, SO₂ dan O₃", {
+  fontSize: "15px",
   fontWeight: "bold",
-  fontSize: "1.2rem",
 });
 
 var parameterAdminDropDown = ui.Select({
@@ -3503,9 +3580,26 @@ var parameterAdminDropDown = ui.Select({
   style: { stretch: "horizontal" },
 });
 
-var infoWilayahAdminLabel = ui.Label("Kelola Area Wilayah Kajian", {
-  fontWeight: "bold",
-  fontSize: "1.2rem",
+jenisAdminPanel.add(infoJenisAdminLabel);
+jenisAdminPanel.add(parameterAdminDropDown);
+
+var areaAdminButton = ui.Button({
+  label: "AREA WILAYAH KAJIAN",
+  style: { stretch: "horizontal", color: "black" },
+});
+var areaAdminPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
+});
+
+areaAdminButton.onClick(function () {
+  if (areaAdminPanel.style().get("shown")) {
+    areaAdminButton.setLabel("AREA WILAYAH KAJIAN");
+    areaAdminPanel.style().set("shown", false);
+  } else {
+    areaAdminButton.setLabel("KELOLA AREA WILAYAH KAJIAN");
+    areaAdminPanel.style().set("shown", true);
+  }
 });
 
 var infoPemilihanWilayahAdminLabel = ui.Label(
@@ -3546,13 +3640,8 @@ var pilihAdminSelect = ui.Select({
 
 var adminTerpilih = "Kawasan Aglomerasi Jakarta";
 
-var infoSubmitAdminLabel = ui.Label(
-  "Analisis dan Visualisasi Spasial Konsentrasi Gas Polutan",
-  {
-    fontWeight: "bold",
-    fontSize: "1.2rem",
-  }
-);
+areaAdminPanel.add(infoPemilihanWilayahAdminLabel);
+areaAdminPanel.add(pilihAdminSelect);
 
 var judulkoordinatAdminLabel = ui.Label(
   "Kelola Koordinat untuk Analisis Dinamika Konsentrasi Polutan",
@@ -3598,165 +3687,27 @@ var koordinatAdminButton = ui.Button({
   style: { stretch: "horizontal" },
 });
 
-var submitAdminButton = ui.Button({
-  label: "Submit dan Analisis Konsentrasi Polutan",
-  onClick: function () {
-    // Memanggil Data Geometri Hasil import untuk memotong Citra
-    var geom = importBatasAdministrasiGeometri();
-    if (geom) {
-      geometri = geom;
-      clipCitraAdmin();
-    }
-    uiMap.clear();
-    uiMap.drawingTools().set("shown", false);
-    grafikPanel.clear();
-    ui.root.remove(grafikPanel);
-
-    // Menambahkan Widgets ke dalam Grafik Panel
-    var grafikKonsentrasiCitraAdmin = visualisasiGrafikCitraAdmin();
-    var grafikKonsentrasiCitraKonversiAdmin =
-      visualisasiGrafikCitraKonversiAdmin();
-    grafikPanel.add(grafikKonsentrasiCitraAdmin);
-    grafikPanel.add(grafikKonsentrasiCitraKonversiAdmin);
-    grafikPanel.add(judulkoordinatAdminLabel);
-    grafikPanel.add(infoKoordinatAdminLabel);
-    grafikPanel.add(infoLongitudeAdminLabel);
-    grafikPanel.add(lonAdminTextBox);
-    grafikPanel.add(infoLatitudeAdminLabel);
-    grafikPanel.add(latAdminTextBox);
-    grafikPanel.add(koordinatAdminButton);
-
-    // Callback Onclick pada Peta untuk mengambil Koordinat dan Ekstraksi Kalkukasi Dinamika Konsentrasi
-    uiMap.onClick(function (coords) {
-      // Mengambil Nilai Koordinat ke dalam TextBox
-      lonAdminTextBox.setValue(coords.lon.toFixed(5));
-      latAdminTextBox.setValue(coords.lat.toFixed(5));
-      var poinKlikAdmin = ee.Geometry.Point(coords.lon, coords.lat);
-      var titik = ui.Map.Layer(
-        poinKlikAdmin,
-        { color: "000000" },
-        "Titik Lokasi/Koordinat"
-      );
-      uiMap.layers().set(2, titik);
-
-      // Memanggil Fungsi set Parameter Tanggal Perekaman dan Jenis Polutan
-      setParamsAdmin();
-
-      // Mengubah Format Date Object menjadi Tahun-Bulan-Hari dan Mengambil String Informasi Tanggal
-      var formatAwalTanggal = awalWaktuAdmin.format("YYYY-MM-dd");
-      var formatAkhirTanggal = akhirWaktuAdmin.format("YYYY-MM-dd");
-
-      // Memilih Citra sesuai Parameter Terpilih
-      var hasilCitra = handleCitra(formatAwalTanggal, formatAkhirTanggal);
-      var col = hasilCitra.col;
-      var polutanMean = hasilCitra.polutanMean;
-
-      // Mengatur Nama Layer sesuai Parameter Terpilih
-      var namaLayer;
-      if (polutanTerpilihAdmin === "Karbon Monoksida") {
-        namaLayer = "Konsentrasi Gas Karbon Monoksida (mol/m²)";
-      } else if (polutanTerpilihAdmin === "Nitrogen Dioksida") {
-        namaLayer = "Konsentrasi Gas Nitrogen Dioksida (mol/m²)";
-      } else if (polutanTerpilihAdmin === "Sulfur Dioksida") {
-        namaLayer = "Konsentrasi Gas Sulfur Dioksida (mol/m²)";
-      } else if (polutanTerpilihAdmin === "Ozon") {
-        namaLayer = "Konsentrasi Gas Ozon (mol/m²)";
-      } else {
-        namaLayer = "Pilih Parameter Jenis Polutan";
-      }
-
-      var namaLayerKonversi;
-      if (polutanTerpilihAdmin === "Karbon Monoksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
-      } else if (polutanTerpilihAdmin === "Nitrogen Dioksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Nitrogen Dioksida Terkonversi (µg/m³)";
-      } else if (polutanTerpilihAdmin === "Sulfur Dioksida") {
-        namaLayerKonversi =
-          "Konsentrasi Gas Sulfur Dioksida Terkonversi (µg/m³)";
-      } else if (polutanTerpilihAdmin === "Ozon") {
-        namaLayerKonversi = "Konsentrasi Gas Ozon Terkonversi (µg/m³)";
-      } else {
-        namaLayerKonversi = "Pilih Parameter Jenis Polutan";
-      }
-
-      // Membuat Grafik Time-Series Konsentrasi Gas Polutan
-      var grafikCitraAsliAdmin = ui.Chart.image
-        .series({
-          imageCollection: col,
-          region: poinKlikAdmin,
-          reducer: ee.Reducer.mean(),
-          scale: 1000,
-        })
-        .setChartType("LineChart")
-        .setSeriesNames([
-          "Konsentrasi Gas " + polutanTerpilihAdmin + " (mol/m²)",
-        ])
-        .setOptions({
-          title: namaLayer,
-          interpolateNulls: true,
-          bestEffort: true,
-          maxPixels: 1e10,
-          hAxis: {
-            title: "Waktu",
-          },
-          vAxis: {
-            title: "Konsentrasi Gas (mol/m²)",
-          },
-          lineWidth: 2,
-          pointSize: 3,
-        });
-
-      // Membuat Grafik Time-Series Konsentrasi Gas Polutan Terkonversi
-      var grafikCitraKonversiAdmin = ui.Chart.image
-        .series({
-          imageCollection: polutanMean,
-          region: poinKlikAdmin,
-          reducer: ee.Reducer.mean(),
-          scale: 1000,
-        })
-        .setChartType("LineChart")
-        .setSeriesNames([
-          "Konsentrasi Gas " + polutanTerpilihAdmin + " (µg/m³)",
-        ])
-        .setOptions({
-          title: namaLayerKonversi,
-          interpolateNulls: true,
-          bestEffort: true,
-          maxPixels: 1e10,
-          hAxis: {
-            title: "Waktu",
-          },
-          vAxis: {
-            title: "Konsentrasi Gas (µg/m³)",
-          },
-          lineWidth: 2,
-          pointSize: 3,
-        });
-
-      // Menampilkan Grafik Pada Grafik Panel
-      grafikPanel.widgets().set(0, grafikCitraAsliAdmin);
-      grafikPanel.widgets().set(1, grafikCitraKonversiAdmin);
-    });
-    uiMap.setOptions("HYBRID");
-    ui.root.remove(urlPanel);
-    ui.root.insert(0, grafikPanel);
-  },
-  style: { stretch: "horizontal" },
+var komputasiAdminButton = ui.Button({
+  label: "KOMPUTASI DAN ANALISIS",
+  style: { stretch: "horizontal", color: "black" },
+});
+var komputasiAdminPanel = ui.Panel(null, null, {
+  stretch: "horizontal",
+  shown: false,
 });
 
-var unduhCitraAdminButton = ui.Button({
-  label: "Unduh Data Spasial Konsentrasi Polutan",
-  onClick: function () {
-    unduhCitraAdmin();
-    ui.root.remove(grafikPanel);
-  },
-  style: { stretch: "horizontal" },
+komputasiAdminButton.onClick(function () {
+  if (komputasiAdminPanel.style().get("shown")) {
+    komputasiAdminButton.setLabel("KOMPUTASI DAN ANALISIS");
+    komputasiAdminPanel.style().set("shown", false);
+  } else {
+    komputasiAdminButton.setLabel("PILIH JENIS KOMPUTASI DAN ANALISIS");
+    komputasiAdminPanel.style().set("shown", true);
+  }
 });
 
-var infoAnalisisAdminLabel = ui.Label(
-  "Analisis dan Visualisasi Spasial Kualitas Udara",
+var infoSubmitAdminLabel = ui.Label(
+  "Komputasi dan Visualisasi Spasial",
   {
     fontWeight: "bold",
     fontSize: "1.2rem",
@@ -3773,27 +3724,194 @@ var infoKlasifikasiAdminLabel = ui.Label(
   "https://drive.google.com/file/d/1aC6rH7uoVfM9oJCcroJ3zm24942G83fY/view?usp=sharing"
 );
 
-var submitKualitasUdaraAdminButton = ui.Button({
-  label: "Submit dan Analisis Kualitas Udara",
+var komputasiAdminDropDown = ui.Select({
+  items: ["Konsentrasi Polutan", "Kualitas Udara"],
+  placeholder: "Pilih Jenis Komputasi",
+  onChange: function (selected) {},
+  style: { stretch: "horizontal" },
+});
+
+var submitAdminButton = ui.Button({
+  label: "Submit dan Analisis ",
   onClick: function () {
-    uiMap.clear();
-    uiMap.setOptions("HYBRID");
-    uiMap.drawingTools().set("shown", false);
-    ui.root.remove(grafikPanel);
-    ui.root.remove(urlPanel);
-    prosesAnalisisKualitasUdaraAdmin();
+    setParamsAdmin();
+    if (komputasiTerpilihAdmin === "Konsentrasi Polutan") {
+        // Memanggil Data Geometri Hasil import untuk memotong Citra
+        var geom = importBatasAdministrasiGeometri();
+        if (geom) {
+          geometri = geom;
+          clipCitraAdmin();
+        }
+        uiMap.clear();
+        uiMap.drawingTools().set("shown", false);
+        grafikPanel.clear();
+        ui.root.remove(grafikPanel);
+    
+        // Menambahkan Widgets ke dalam Grafik Panel
+        var grafikKonsentrasiCitraAdmin = visualisasiGrafikCitraAdmin();
+        var grafikKonsentrasiCitraKonversiAdmin =
+          visualisasiGrafikCitraKonversiAdmin();
+        grafikPanel.add(grafikKonsentrasiCitraAdmin);
+        grafikPanel.add(grafikKonsentrasiCitraKonversiAdmin);
+        grafikPanel.add(judulkoordinatAdminLabel);
+        grafikPanel.add(infoKoordinatAdminLabel);
+        grafikPanel.add(infoLongitudeAdminLabel);
+        grafikPanel.add(lonAdminTextBox);
+        grafikPanel.add(infoLatitudeAdminLabel);
+        grafikPanel.add(latAdminTextBox);
+        grafikPanel.add(koordinatAdminButton);
+    
+        // Callback Onclick pada Peta untuk mengambil Koordinat dan Ekstraksi Kalkukasi Dinamika Konsentrasi
+        uiMap.onClick(function (coords) {
+          // Mengambil Nilai Koordinat ke dalam TextBox
+          lonAdminTextBox.setValue(coords.lon.toFixed(5));
+          latAdminTextBox.setValue(coords.lat.toFixed(5));
+          var poinKlikAdmin = ee.Geometry.Point(coords.lon, coords.lat);
+          var titik = ui.Map.Layer(poinKlikAdmin, {color: '000000'}, 'Titik Lokasi/Koordinat');
+          uiMap.layers().set(2, titik);
+    
+          // Memanggil Fungsi set Parameter Tanggal Perekaman dan Jenis Polutan
+          setParamsAdmin();
+    
+          // Mengubah Format Date Object menjadi Tahun-Bulan-Hari dan Mengambil String Informasi Tanggal
+          var formatAwalTanggal = awalWaktuAdmin.format("YYYY-MM-dd");
+          var formatAkhirTanggal = akhirWaktuAdmin.format("YYYY-MM-dd");
+    
+          // Memilih Citra sesuai Parameter Terpilih
+          var hasilCitra = handleCitra(formatAwalTanggal, formatAkhirTanggal);
+          var col = hasilCitra.col;
+          var polutanMean = hasilCitra.polutanMean;
+    
+          // Mengatur Nama Layer sesuai Parameter Terpilih
+          var namaLayer;
+          if (polutanTerpilihAdmin === "Karbon Monoksida") {
+            namaLayer = "Konsentrasi Gas Karbon Monoksida (mol/m²)";
+          } else if (polutanTerpilihAdmin === "Nitrogen Dioksida") {
+            namaLayer = "Konsentrasi Gas Nitrogen Dioksida (mol/m²)";
+          } else if (polutanTerpilihAdmin === "Sulfur Dioksida") {
+            namaLayer = "Konsentrasi Gas Sulfur Dioksida (mol/m²)";
+          } else if (polutanTerpilihAdmin === "Ozon") {
+            namaLayer = "Konsentrasi Gas Ozon (mol/m²)";
+          } else {
+            namaLayer = "Pilih Parameter Jenis Polutan";
+          }
+          
+          var namaLayerKonversi;
+          if (polutanTerpilihAdmin === "Karbon Monoksida") {
+            namaLayerKonversi = "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
+          } else if (polutanTerpilihAdmin === "Nitrogen Dioksida") {
+            namaLayerKonversi = "Konsentrasi Gas Nitrogen Dioksida Terkonversi (µg/m³)";
+          } else if (polutanTerpilihAdmin === "Sulfur Dioksida") {
+            namaLayerKonversi = "Konsentrasi Gas Sulfur Dioksida Terkonversi (µg/m³)";
+          } else if (polutanTerpilihAdmin === "Ozon") {
+            namaLayerKonversi = "Konsentrasi Gas Ozon Terkonversi (µg/m³)";
+          } else {
+            namaLayerKonversi = "Pilih Parameter Jenis Polutan";
+          }
+    
+          // Membuat Grafik Time-Series Konsentrasi Gas Polutan
+          var grafikCitraAsliAdmin = ui.Chart.image
+            .series({
+              imageCollection: col,
+              region: poinKlikAdmin,
+              reducer: ee.Reducer.mean(),
+              scale: 1000,
+            })
+            .setChartType("LineChart")
+            .setSeriesNames([
+              "Konsentrasi Gas " + polutanTerpilihAdmin + " (mol/m²)",
+            ])
+            .setOptions({
+              title: namaLayer,
+              interpolateNulls: true,
+              bestEffort: true,
+              maxPixels: 1e10,
+              hAxis: {
+                title: "Waktu",
+              },
+              vAxis: {
+                title: "Konsentrasi Gas (mol/m²)",
+              },
+              lineWidth: 2,
+              pointSize: 3,
+            });
+    
+          // Membuat Grafik Time-Series Konsentrasi Gas Polutan Terkonversi
+          var grafikCitraKonversiAdmin = ui.Chart.image
+            .series({
+              imageCollection: polutanMean,
+              region: poinKlikAdmin,
+              reducer: ee.Reducer.mean(),
+              scale: 1000,
+            })
+            .setChartType("LineChart")
+            .setSeriesNames([
+              "Konsentrasi Gas " + polutanTerpilihAdmin + " (µg/m³)",
+            ])
+            .setOptions({
+              title: namaLayerKonversi,
+              interpolateNulls: true,
+              bestEffort: true,
+              maxPixels: 1e10,
+              hAxis: {
+                title: "Waktu",
+              },
+              vAxis: {
+                title: "Konsentrasi Gas (µg/m³)",
+              },
+              lineWidth: 2,
+              pointSize: 3,
+            });
+            
+          // Menampilkan Grafik Pada Grafik Panel 
+          grafikPanel.widgets().set(0, grafikCitraAsliAdmin);
+          grafikPanel.widgets().set(1, grafikCitraKonversiAdmin);
+        });
+        uiMap.setOptions("HYBRID");
+        ui.root.remove(urlPanel);
+        ui.root.insert(0, grafikPanel);
+      } else if (komputasiTerpilihAdmin === "Kualitas Udara") {
+        uiMap.clear();
+        uiMap.setOptions("HYBRID");
+        uiMap.drawingTools().set("shown", false);
+        ui.root.remove(grafikPanel);
+        ui.root.remove(urlPanel);
+        prosesAnalisisKualitasUdaraAdmin();
+      } else {
+        uiMap.clear();
+        uiMap.setOptions("HYBRID");
+        uiMap.drawingTools().set("shown", false);
+        ui.root.remove(grafikPanel);
+        ui.root.remove(urlPanel);
+        prosesAnalisisKualitasUdaraAdmin();
+      }
   },
   style: { stretch: "horizontal" },
 });
 
-var unduhCitraKualitasUdaraAdminButton = ui.Button({
-  label: "Unduh Data Spasial Kualitas Udara",
+var unduhCitraAdminButton = ui.Button({
+  label: "Unduh Data Spasial",
   onClick: function () {
-    unduhCitraKualitasUdaraAdmin();
-    ui.root.remove(grafikPanel);
+    setParamsAdmin();
+    if (komputasiTerpilihAdmin === "Konsentrasi Polutan") {
+        unduhCitraAdmin();
+        ui.root.remove(grafikPanel);
+      } else if (komputasiTerpilihAdmin === "Kualitas Udara") {
+        unduhCitraKualitasUdaraAdmin();
+        ui.root.remove(grafikPanel);
+      } else {
+        unduhCitraKualitasUdaraAdmin();
+        ui.root.remove(grafikPanel);
+      }
   },
   style: { stretch: "horizontal" },
 });
+
+komputasiAdminPanel.add(infoSubmitAdminLabel);
+komputasiAdminPanel.add(infoKlasifikasiAdminLabel);
+komputasiAdminPanel.add(komputasiAdminDropDown);
+komputasiAdminPanel.add(submitAdminButton);
+komputasiAdminPanel.add(unduhCitraAdminButton);
 
 var kembaliAdminButton = ui.Button({
   label: "Kembali",
@@ -3815,7 +3933,7 @@ var kembaliAdminButton = ui.Button({
 //############################# PENGATURAN FUNGSI TANGGAL DAN JENIS HALAMAN ROI ######################################
 
 // Deklarasi Variabel Universal
-var awalWaktuAdmin, akhirWaktuAdmin, polutanTerpilihAdmin;
+var awalWaktuAdmin, akhirWaktuAdmin, polutanTerpilihAdmin, komputasiTerpilihAdmin;
 
 // Fungsi untuk set Parameter Waktu dan Jenis Polutan
 function setParamsAdmin() {
@@ -3829,6 +3947,7 @@ function setParamsAdmin() {
 
   // Mengambil nilai variabel Jenis Polutan
   polutanTerpilihAdmin = parameterAdminDropDown.getValue();
+  komputasiTerpilihAdmin = komputasiAdminDropDown.getValue();
 }
 
 // Memanggil setTanggal untuk menentukan data Tanggal
@@ -3881,7 +4000,7 @@ function importBatasAdministrasiGeometri() {
   // Melakukan Load Data Aset Batas Administrasi
   var asetBatasAdministrasi = ee.FeatureCollection(asetId);
   geometri = asetBatasAdministrasi.geometry();
-  geometri = geometri.simplify({ maxError: 1000 });
+  geometri = geometri.simplify({'maxError': 1000});
   return geometri;
 }
 
@@ -3907,7 +4026,7 @@ function clipCitraAdmin() {
     var hasilCitra = handleCitra(formatAwalTanggal, formatAkhirTanggal);
     col = hasilCitra.col;
     var polutanMean = hasilCitra.polutanMean;
-
+    
     // Membuat Zoom In Peta Sesuai Geometri
     Map.centerObject(geometri);
   }
@@ -3935,24 +4054,8 @@ function unduhCitraAdmin() {
 
     // Mengatur Penamaan Data yang diunduh agar tidak ada spasi
     var ubahNama = polutanTerpilihAdmin.replace(/ /g, "_"); // Replace spaces with underscores
-    var deskripsiAsli =
-      "Citra_Sentinel_5P" +
-      "_" +
-      ubahNama +
-      "_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal;
-    var deskripsiKonversi =
-      "Citra_Sentinel_5P" +
-      "_" +
-      ubahNama +
-      "_" +
-      "Terkonversi" +
-      "_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal;
+    var deskripsiAsli = "Citra_Sentinel_5P" + "_" + ubahNama + "_" + formatAwalTanggal + "_" + formatAkhirTanggal;
+     var deskripsiKonversi = "Citra_Sentinel_5P" + "_" + ubahNama + "_" + "Terkonversi" +"_" + formatAwalTanggal + "_" + formatAkhirTanggal;
 
     // Mengambil Data Citra dengan Nilai Mean (Rata-Rata) (Asli dan Konversi)
     var meanCitraAsli = col.mean();
@@ -3986,35 +4089,12 @@ function unduhCitraAdmin() {
     });
     var unduhLinkCitraAsli = ui.Label({
       value:
-        "• Link Unduh Citra Sentinel 5P " +
-        polutanTerpilihAdmin +
-        " " +
-        "(" +
-        formatAwalTanggal +
-        ")" +
-        "-" +
-        "(" +
-        formatAkhirTanggal +
-        ")" +
-        " " +
-        " (mol/m²)",
+        "• Link Unduh Citra Sentinel 5P " + polutanTerpilihAdmin + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")" + " " + " (mol/m²)",
       targetUrl: unduhUrlCitraAsli,
     });
     var unduhLinkCitraKonversi = ui.Label({
       value:
-        "• Link Unduh Citra Sentinel 5P " +
-        polutanTerpilihAdmin +
-        " Terkonversi " +
-        " " +
-        "(" +
-        formatAwalTanggal +
-        ")" +
-        "-" +
-        "(" +
-        formatAkhirTanggal +
-        ")" +
-        " " +
-        " (ug/m3)",
+        "• Link Unduh Citra Sentinel 5P " + polutanTerpilihAdmin + " Terkonversi " + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")" + " " + " (ug/m3)",
       targetUrl: unduhUrlCitraKonversi,
     });
 
@@ -4103,27 +4183,15 @@ function unduhCitraKualitasUdaraAdmin() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas NO2
   var kelasNO2 = NO2_MeanMikrogram.where(NO2_MeanMikrogram.lte(0.1380165), 1)
-    .where(
-      NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)),
-      2
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)),
-      3
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)),
-      4
-    )
+    .where(NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)), 2)
+    .where(NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)), 3)
+    .where(NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)), 4)
     .where(NO2_MeanMikrogram.gt(1.196144), 5);
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas SO2
   var kelasSO2 = SO2_MeanMikrogram.where(SO2_MeanMikrogram.lte(0.192195), 1)
-    .where(
-      SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)),
-      2
-    )
-    .where(SO2_MeanMikrogram.gt(0.3844).and(SO2_MeanMikrogram.lte(0.51252)), 3)
+    .where(SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)), 2)
+    .where(SO2_MeanMikrogram.gt(0.38440).and(SO2_MeanMikrogram.lte(0.51252)), 3)
     .where(SO2_MeanMikrogram.gt(0.51253).and(SO2_MeanMikrogram.lte(1.2813)), 4)
     .where(SO2_MeanMikrogram.gt(1.2814), 5);
 
@@ -4151,11 +4219,7 @@ function unduhCitraKualitasUdaraAdmin() {
 
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var unduhUrlCO = kelasCO.getDownloadURL({
-    name:
-      "Kualitas Polutan Karbon Monoksida_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal,
+    name: "Kualitas Polutan Karbon Monoksida_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -4165,10 +4229,7 @@ function unduhCitraKualitasUdaraAdmin() {
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var unduhUrlNO2 = kelasNO2.getDownloadURL({
     name:
-      "Kualitas Polutan Nitrogen Dioksida_" +
-      formatAwalTanggal +
-      "_" +
-      formatAkhirTanggal,
+      "Kualitas Polutan Nitrogen Dioksida_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -4178,10 +4239,7 @@ function unduhCitraKualitasUdaraAdmin() {
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var unduhUrlSO2 = kelasSO2.getDownloadURL({
     name:
-      "Kualitas Polutan Sulfur Dioksida_" +
-      formatAwalTanggal +
-      " " +
-      formatAkhirTanggal,
+      "Kualitas Polutan Sulfur Dioksida_" + formatAwalTanggal + " " + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -4190,8 +4248,7 @@ function unduhCitraKualitasUdaraAdmin() {
 
   // Mendapatkan URL dari Hasil Export Citra Kualitas Udara SO2 untuk di-Unduh
   var unduhUrlO3 = kelasO3.getDownloadURL({
-    name:
-      "Kualitas Polutan Ozon_" + formatAwalTanggal + "_" + formatAkhirTanggal,
+    name: "Kualitas Polutan Ozon_" + formatAwalTanggal + "_" + formatAkhirTanggal,
     scale: 1000,
     region: geometri,
     maxPixels: 1e10,
@@ -4213,67 +4270,27 @@ function unduhCitraKualitasUdaraAdmin() {
   });
   var unduhLinkCO = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Karbon Monoksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Karbon Monoksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlCO,
   });
   var unduhLinkNO2 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Nitrogen Dioksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Nitrogen Dioksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlNO2,
   });
   var unduhLinkSO2 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Sulfur Dioksida" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Sulfur Dioksida" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlSO2,
   });
   var unduhLinkO3 = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Polutan Ozon" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Polutan Ozon" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlO3,
   });
   var unduhLinkKualitasUdara = ui.Label({
     value:
-      "• Link Unduh Data Kualitas Udara" +
-      " " +
-      "(" +
-      formatAwalTanggal +
-      ")" +
-      "-" +
-      "(" +
-      formatAkhirTanggal +
-      ")",
+      "• Link Unduh Data Kualitas Udara" + " " + "(" + formatAwalTanggal + ")" + "-" + "(" + formatAkhirTanggal + ")",
     targetUrl: unduhUrlKualitasUdara,
   });
 
@@ -4419,16 +4436,15 @@ var visualisasiGrafikCitraAdmin = function () {
 
   // Menambahkan Citra Hasil Visualisasi Ke Peta
   uiMap.addLayer(col.mean().clip(geometri), parameterVis, namaLayer);
-
+  
   // Menampilkan Batas Admin
   var emptyGeometri = ee.Image().byte();
   var outlineGeometri = emptyGeometri.paint({
     featureCollection: geometri,
     color: 1,
-    width: 2,
-  });
-  uiMap.addLayer(outlineGeometri, { palette: "000000" }, "Batas Geometri");
-
+    width: 2});
+  uiMap.addLayer(outlineGeometri, {palette: '000000'}, 'Batas Geometri');
+  
   uiMap.centerObject(geometri);
   legendaPolutan(col);
 
@@ -4502,13 +4518,9 @@ function grafikKoordinatAdmin() {
   var koordinatLonAdmin = parseFloat(lonAdminTextBox.getValue());
   var koordinatLatAdmin = parseFloat(latAdminTextBox.getValue());
   var poinAdmin = ee.Geometry.Point(koordinatLonAdmin, koordinatLatAdmin);
-  var titik = ui.Map.Layer(
-    poinAdmin,
-    { color: "000000" },
-    "Titik Lokasi/Koordinat"
-  );
+  var titik = ui.Map.Layer(poinAdmin, {color: '000000'}, 'Titik Lokasi/Koordinat');
   uiMap.layers().set(2, titik);
-
+  
   // Memanggil Fungsi untuk set Parameter Waktu dan Jenis Polutan
   setParamsAdmin();
 
@@ -4534,7 +4546,7 @@ function grafikKoordinatAdmin() {
   } else {
     namaLayer = "Pilih Parameter Jenis Polutan";
   }
-
+  
   var namaLayerKonversi;
   if (polutanTerpilihAdmin === "Karbon Monoksida") {
     namaLayerKonversi = "Konsentrasi Gas Karbon Monoksida Terkonversi (µg/m³)";
@@ -4597,7 +4609,7 @@ function grafikKoordinatAdmin() {
       lineWidth: 2,
       pointSize: 3,
     });
-
+    
   // Menampilkan Grafik ke dalam Grafik Panel
   grafikPanel.widgets().set(0, grafikCitraAsliAdmin);
   grafikPanel.widgets().set(1, grafikCitraKonversiAdmin);
@@ -4675,18 +4687,9 @@ function prosesAnalisisKualitasUdaraAdmin() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas NO2
   var kelasNO2 = NO2_MeanMikrogram.where(NO2_MeanMikrogram.lte(0.1380165), 1)
-    .where(
-      NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)),
-      2
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)),
-      3
-    )
-    .where(
-      NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)),
-      4
-    )
+    .where(NO2_MeanMikrogram.gt(0.1380166).and(NO2_MeanMikrogram.lte(0.2300275)), 2)
+    .where(NO2_MeanMikrogram.gt(0.2300276).and(NO2_MeanMikrogram.lte(0.5060605)), 3)
+    .where(NO2_MeanMikrogram.gt(0.5060606).and(NO2_MeanMikrogram.lte(1.196143)), 4)
     .where(NO2_MeanMikrogram.gt(1.196144), 5);
   uiMap.addLayer(
     kelasNO2,
@@ -4696,11 +4699,8 @@ function prosesAnalisisKualitasUdaraAdmin() {
 
   // Melakukan Klasifikasi dan Visualisasi Kualitas Gas SO2
   var kelasSO2 = SO2_MeanMikrogram.where(SO2_MeanMikrogram.lte(0.192195), 1)
-    .where(
-      SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)),
-      2
-    )
-    .where(SO2_MeanMikrogram.gt(0.3844).and(SO2_MeanMikrogram.lte(0.51252)), 3)
+    .where(SO2_MeanMikrogram.gt(0.192196).and(SO2_MeanMikrogram.lte(0.38439)), 2)
+    .where(SO2_MeanMikrogram.gt(0.38440).and(SO2_MeanMikrogram.lte(0.51252)), 3)
     .where(SO2_MeanMikrogram.gt(0.51253).and(SO2_MeanMikrogram.lte(1.2813)), 4)
     .where(SO2_MeanMikrogram.gt(1.2814), 5);
   uiMap.addLayer(
@@ -4740,19 +4740,18 @@ function prosesAnalisisKualitasUdaraAdmin() {
     { min: 1, max: 5, palette: ["green", "blue", "yellow", "red", "black"] },
     "Klasifikasi Kualitas Udara"
   );
-
+  
   // Menampilkan Batas Admin
   var emptyGeometri = ee.Image().byte();
   var outlineGeometri = emptyGeometri.paint({
     featureCollection: geometri,
     color: 1,
-    width: 2,
-  });
-  uiMap.addLayer(outlineGeometri, { palette: "000000" }, "Batas Geometri");
-
-  // Mengatur Zoom In Peta Sesuai Geometri
+    width: 2});
+  uiMap.addLayer(outlineGeometri, {palette: '000000'}, 'Batas Geometri');
+  
+  // Mengatur Zoom In Peta Sesuai Geometri 
   uiMap.centerObject(geometri);
-
+  
   // Memanggil Fungsi Pembuatan Legenda Kualitas Udara
   legendaKualitasUdara();
 }
@@ -4767,25 +4766,20 @@ var adminPanel = ui.Panel({
     petunjukAdminButton,
     petunjukAdminPanel,
     peringatanAdminLabel,
-    garisAdminSeparator,
-    infoTanggalAdminLabel,
-    infoPemilihanTanggalAdminLabel,
-    infoTanggalAwalAdminLabel,
-    awalTanggalAdminSlider,
-    infoTanggalAkhirAdminLabel,
-    akhirTanggalAdminSlider,
-    infoJenisAdminLabel,
-    parameterAdminDropDown,
-    infoWilayahAdminLabel,
-    infoPemilihanWilayahAdminLabel,
-    pilihAdminSelect,
-    infoSubmitAdminLabel,
-    submitAdminButton,
-    unduhCitraAdminButton,
-    infoAnalisisAdminLabel,
-    infoKlasifikasiAdminLabel,
-    submitKualitasUdaraAdminButton,
-    unduhCitraKualitasUdaraAdminButton,
+    garisAdminSeparator1,
+    infoParameterAdminLabel,
+    waktuAdminButton,
+    waktuAdminPanel,
+    garisAdminSeparator2,
+    jenisAdminButton,
+    jenisAdminPanel,
+    garisAdminSeparator3,
+    areaAdminButton,
+    areaAdminPanel,
+    garisAdminSeparator4,
+    komputasiAdminButton,
+    komputasiAdminPanel,
+    garisAdminSeparator5,
     kembaliAdminButton,
   ],
   style: {
